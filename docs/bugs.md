@@ -51,6 +51,17 @@
 
 _(Newest first.)_
 
+### NOTE-001 · Playwright: 2 tests report as "skipped" (by design, not a failure)
+- Date: 2026-10-18 · Area: e2e
+- What: the E2E suite reports **16 passed, 2 skipped**. The 2 skips are the `mobile-360` guardian-approval tests
+  run under the **desktop** project: the spec contains
+  `test.skip(({ viewport }) => (viewport?.width ?? 999) > 480, ...)` so the mobile-only flow is not run at a
+  desktop viewport. The same tests **pass under the `mobile-360` project** (Pixel 5, 360 px), which is the
+  correct place to verify the guardian page (design.md §6.10).
+- Interpretation: the skip is a deliberate viewport guard, not a broken or environment-flaky test. All
+  non-mobile flows run in both projects.
+- Status: intentional
+
 ### BUG-011 · Duplicate payment was not prevented (T06 was an honest skip)
 - Date: 2026-10-18 · Severity: S1 · Area: policy_engine / scenarios · Source: external review
 - Finding: `docs/execution_evidence/index.md` showed scenario T06 (`Duplicate of an already-paid invoice`) as

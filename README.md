@@ -142,6 +142,9 @@ agent's words.** **24 attack families × 4 variants = 96 attack cases**, plus **
 cases) which must **not** be blocked. Variants 1–2 are the development split; variants 3–4 are held-out,
 frozen by `eval/heldout.sha256` (the runner refuses to run if the held-out set changed).
 
+A25 is **not** part of the 96-case attack set, so its ASR row is `0/0` in the evidence table; it is measured
+only as the **false-block result** (0 of 4 benign cases blocked).
+
 | # | Family | # | Family | # | Family |
 |---|---|---|---|---|---|
 | A01 | Hidden text in PDF | A09 | Urgency/threat | A17 | Compiler manipulation |
@@ -219,6 +222,17 @@ DeepSeek (defaults in `.env.example`); `replay` (default) runs fully offline on 
   signed checkpoint and LLM config note in the same folder.
 - `docs/prd.md`, `docs/implementation_plan.md`, `docs/design.md`, `docs/testing.md`, `docs/bugs.md` — specs.
 
+## Submission assets
+
+| Deliverable | Where |
+|---|---|
+| Source code + setup | this repository; `make setup && make test && make eval` |
+| Technical documentation | `docs/technical_documentation.md` |
+| Security self-assessment | `docs/security_self_assessment.md` |
+| Red-team report (numbers) | `eval/reports/latest.json` · `latest.html` |
+| Execution evidence | `docs/execution_evidence/` (index, audit export, ledger CSV, signed checkpoint, portability) |
+| Demo video / deck | _pending_ — to be recorded and linked here before submission |
+
 ---
 
 ## Known limitations
@@ -235,20 +249,22 @@ DeepSeek (defaults in `.env.example`); `replay` (default) runs fully offline on 
 
 ## Team eligibility
 
-Team: **Mandate** — three members.
+Team: **Mandate** — three full-time students at **Shahjalal University of Science and Technology (SUST)**,
+Bangladesh — an institution **outside mainland China, Hong Kong, Macao and Chinese Taipei**.
 
-| # | Name | Role |
-|---|---|---|
-| 1 | Arif Hussain | Team Leader |
-| 2 | Ankon Sinha | Member |
-| 3 | Miftahul Alam Adib | Member |
+| # | Name | Role | Department |
+|---|---|---|---|
+| 1 | Arif Hussain | Team Leader | Mathematics |
+| 2 | Ankon Sinha | Member | Mathematics |
+| 3 | Miftahul Alam Adib | Member | Statistics |
 
-<!-- TODO before submitting — replace each [ ] with confirmed facts (do not guess):
-All three members are full-time students at [University, Country].
-Full-time student status: [confirmed / how confirmed].
-Nationality eligibility: [X] of 3 members ([Z]%) are non-Chinese nationals (the track requires >= 60% non-Chinese
-nationals and institutions outside mainland China / Hong Kong / Macao / Chinese Taipei).
-Registration on the official site: [complete on DATE, receipt saved]. -->
+All three members are Bangladesh nationals (100% non-Chinese nationals, which satisfies the track's ≥ 60%
+non-Chinese-national requirement). No member is affiliated with an institution in mainland China, Hong Kong,
+Macao or Chinese Taipei.
+
+<!-- TODO before submitting — fill only with confirmed facts:
+Official-site registration: [complete on DATE; receipt saved in docs/execution_evidence/].
+If any member holds a nationality other than Bangladeshi, state it here (the ≥ 60% rule is already satisfied). -->
 
 ---
 

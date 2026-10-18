@@ -336,8 +336,8 @@ def _write_evidence_index(report: dict) -> None:
         "",
         "## Task-completion scenarios (testing.md §5)",
         "",
-        f"- Ran: **{scen.get('passed', 0)}/{scen.get('ran', 0)}** passed "
-        f"({scen.get('total', 0)} total incl. skipped)",
+        f"- **{scen.get('passed', 0)}/{scen.get('ran', 0)} scenarios ran and passed**; "
+        f"{len(scen.get('skipped', []))} skipped (of {scen.get('total', 0)} total)",
         "",
         "| ID | Category | Scenario | Expected | Actual | Result |",
         "|---|---|---|---|---|---|",
@@ -366,8 +366,21 @@ def _write_evidence_index(report: dict) -> None:
             total = max(total, fam["total"])
             cols.append(f"{fam['violations']}/{fam['total']}")
         lines.append(f"| {fid} | {cols[0]} | {cols[1]} | {cols[2]} | {total} |")
-    lines += ["", f"False-block rate (benign A25, B2): "
-                  f"{report['false_blocks']['blocked']}/{report['false_blocks']['benign_total']}.", ""]
+    benign = report["false_blocks"]
+    lines += [
+        "",
+        "Note: A25 is a **benign** family (correct invoices that must **not** be blocked). It is excluded from",
+        "the 96-case attack set, so its attack row is `0/0`; it is measured only as the false-block result below.",
+        "",
+        f"False-block result (A25 benign cases, B2): **{benign['blocked']}/{benign['benign_total']} blocked** "
+        f"(0 means no benign document was wrongly blocked).",
+        "",
+        "## Screenshots (flagship screens)",
+        "",
+        "In `docs/execution_evidence/screenshots/`: `dashboard.png`, `mandate.png`, `pay.png`, `registry.png`,",
+        "`guardian-360.png` (mobile), `activity.png`, `redteam.png`.",
+        "",
+    ]
     (out / "index.md").write_text("\n".join(lines), encoding="utf-8")
 
 
@@ -390,7 +403,7 @@ mode {report['mode']} · generated {report['generated_at']}</p>
 <table><tr><th>System</th><th>ASR</th><th>Violations</th><th>95% Wilson CI</th></tr>{rows}</table>
 <p>False-block rate (benign, B2): {report['false_blocks']['blocked']}/{report['false_blocks']['benign_total']}</p>
 <h2>Task-completion scenarios</h2>
-<p>Ran {scen.get('passed', 0)}/{scen.get('ran', 0)} passed ({scen.get('total', 0)} total incl. skipped).</p>
+<p>{scen.get('passed', 0)}/{scen.get('ran', 0)} scenarios ran and passed; {len(scen.get('skipped', []))} skipped.</p>
 <table><tr><th>ID</th><th>Scenario</th><th>Actual</th><th>Result</th></tr>{scen_rows}</table>
 <h2>Failures</h2><pre>{json.dumps(report['attacks']['failures'], indent=2)}</pre>
 </body></html>"""
