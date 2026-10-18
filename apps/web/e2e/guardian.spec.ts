@@ -34,12 +34,12 @@ test.describe("mobile-360 guardian approval", () => {
     const token = created.approval.token as string;
     await page.goto(`/approve/${token}`);
     await expect(page.getByRole("heading", { name: /Rafi wants to send/i })).toBeVisible();
+    // The page fetches the pre-payment summary from the token (no JSON pasting) and shows the lock text.
     await expect(page.getByText(/locked to this exact payment/i)).toBeVisible();
+    await expect(page.getByText("Northfield University")).toBeVisible();
+    await expect(page.getByText(/1,800\.00/)).toBeVisible();
 
-    // The guardian pastes the payment details as received, then approves.
-    await page.locator("#prop").fill(JSON.stringify(created.proposal));
     await page.getByRole("button", { name: "Approve", exact: true }).click();
-
     await expect(page.getByRole("status").first()).toContainText(/Allowed/i);
     await expect(page.getByText(/checked again and sent/i)).toBeVisible();
   });
@@ -47,8 +47,11 @@ test.describe("mobile-360 guardian approval", () => {
   test("guardian buttons are full width, stacked and at least 48px tall", async ({ page, request }) => {
     await seedMandate(request);
     await page.goto("/approve/preview-token-not-used");
+    // Buttons render even when the token is unknown (the summary fails to load, but the controls are present).
     const approve = page.getByRole("button", { name: "Approve", exact: true });
     const reject = page.getByRole("button", { name: "Reject", exact: true });
+    await expect(approve).toBeVisible();
+    await expect(reject).toBeVisible();
     const a = await approve.boundingBox();
     const r = await reject.boundingBox();
     expect(a && r).toBeTruthy();
