@@ -77,7 +77,7 @@ _(Newest first.)_
   families × 4), with **A25** being a benign look-alike family that must not be blocked; the false-block and
   task-completion summaries were terse and could be read as over-claiming.
 - Fix: README now states "24 attack families × 4 = 96 cases + A25 benign look-alikes", gives CI bounds, phrases
-  the false-block result as "0 false blocks among 4 benign case families", and reports scenarios as
+  the false-block result as "0 false blocks among 4 benign cases", and reports scenarios as
   "10/10 ran pass". `docs/testing.md`, `docs/prd.md`, `docs/implementation_plan.md`, the ports evidence and the
   deck wording are aligned to the same numbers.
 - Status: fixed

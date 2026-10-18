@@ -20,7 +20,7 @@ deterministic engine, a signed payee registry and a transaction-bound approval d
 | Attack success rate — naive agent (B0) | **69.8%** (67/96) — 95% Wilson CI [0.600, 0.781] | `eval/reports/latest.json` |
 | Attack success rate — safety-prompted agent (B1) | **40.6%** (39/96) — CI [0.314, 0.506] | same |
 | Attack success rate — **Mandate (B2)** | **0.0%** (0/96) — CI [0.000, 0.038] | same |
-| False blocks | **0 false blocks among 4 benign case families** | same |
+| False blocks | **0 false blocks among 4 benign cases** | same |
 | Task-completion scenarios (priority subset) | **10/10 ran pass** (including T06 duplicate-payment) | same |
 | End-to-end UI flows (Playwright) | **16 pass, 2 mobile-only skips** | `make e2e` |
 
@@ -37,7 +37,7 @@ deterministic engine, a signed payee registry and a transaction-bound approval d
   — our B1 baseline still failed **40.6%** of attacks.
 - **Built:** the fix is not a better prompt. It is **unambiguous authority**: a signed rule set the user
   approves, a signed registry that matches payees **by account, not by name**, and a single signed execution
-  path. Result: **0%** attack success on the same 96 cases, with **no** false blocks on benign documents.
+  path. Result: **0%** attack success on the same 96 cases, with **no** false blocks on the benign cases.
 - **Why it holds:** the AI is *isolated* (no tools, no DB, no ledger), decisions are *pure* code, and execution
   demands a signed, single-use, action-bound token. An attacker who fully controls the document still cannot
   cause a payment the signed policy does not permit.
@@ -235,8 +235,20 @@ DeepSeek (defaults in `.env.example`); `replay` (default) runs fully offline on 
 
 ## Team eligibility
 
-<!-- FILL WITH REAL, CONFIRMED FACTS BEFORE SUBMITTING (no placeholders):
-All team members are full-time students at [University, Country]. [X] of [Y] members ([Z]%) are non-Chinese nationals. -->
+Team: **Mandate** — three members.
+
+| # | Name | Role |
+|---|---|---|
+| 1 | Arif Hussain | Team Leader |
+| 2 | Ankon Sinha | Member |
+| 3 | Miftahul Alam Adib | Member |
+
+<!-- TODO before submitting — replace each [ ] with confirmed facts (do not guess):
+All three members are full-time students at [University, Country].
+Full-time student status: [confirmed / how confirmed].
+Nationality eligibility: [X] of 3 members ([Z]%) are non-Chinese nationals (the track requires >= 60% non-Chinese
+nationals and institutions outside mainland China / Hong Kong / Macao / Chinese Taipei).
+Registration on the official site: [complete on DATE, receipt saved]. -->
 
 ---
 
