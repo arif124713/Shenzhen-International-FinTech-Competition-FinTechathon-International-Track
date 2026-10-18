@@ -97,6 +97,7 @@ def _evaluate(rt, signed, proposal: ActionProposal, proposal_id: str | None = No
         active_mandate_version=signed.body["version"], ledger=(), balances=rt.ledger.balances(),
         registry=_registry_signed(rt), reader=reader, detector_flags=flags,
         hold_started_at=rt.hold_started_at(proposal.proposal_id),
+        paid_action_hashes=rt.ledger.executed_action_hashes(),
     )
     decision = decide(signed, proposal, ctx)
     token = issue_decision_token(rt.keys["engine"]["private_b64"], "demo_engine_k1", decision,
@@ -206,7 +207,7 @@ def approval_decision(body: ApproveBody) -> dict:
         raise HTTPException(status_code=409, detail={"code": "NO_ACTIVE_MANDATE"})
     ctx = Context(now=rt.clock(), mandate_keys=rt.mandate_keys, registry_keys=rt.registry.key_infos,
                   active_mandate_version=signed.body["version"], ledger=(), balances=rt.ledger.balances(),
-                  registry=_registry_signed(rt), approvals=(approval,))
+                  registry=_registry_signed(rt), approvals=(approval,), paid_action_hashes=rt.ledger.executed_action_hashes())
     decision = decide(signed, proposal, ctx)
     token = issue_decision_token(rt.keys["engine"]["private_b64"], "demo_engine_k1", decision,
                                  nonce=f"n_{uuid.uuid4().hex[:16]}", issued_at=rt.clock(),

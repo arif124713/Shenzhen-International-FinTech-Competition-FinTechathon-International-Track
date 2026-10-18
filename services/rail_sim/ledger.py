@@ -25,6 +25,7 @@ class Receipt:
     debit_minor: int
     rail_id: str
     executed_at: str
+    action_hash: str = ""
     simulated: bool = True
 
 
@@ -42,9 +43,16 @@ class SandboxLedger:
         with self._lock:
             return dict(self._balances)
 
+    def executed_action_hashes(self) -> tuple[str, ...]:
+        """Every action_hash that has already executed. Used by the ContextBuilder so the engine can deny a
+        duplicate (a re-submitted invoice) at the decision layer — distinct from the executor's token-replay
+        guard, which only stops the *same token* being reused."""
+        with self._lock:
+            return tuple(r.action_hash for r in self._receipts.values() if r.action_hash)
+
     def transfer(self, *, idempotency_key: str, proposal_id: str, payee_id: str | None, amount_minor: int,
                  currency: str, category: str, source_account: str, debit_minor: int, rail_id: str,
-                 executed_at: datetime) -> Receipt:
+                 executed_at: datetime, action_hash: str = "") -> Receipt:
         """Atomic and idempotent: the same key never debits twice."""
         with self._lock:
             if idempotency_key in self._receipts:
@@ -55,7 +63,7 @@ class SandboxLedger:
             receipt = Receipt(
                 receipt_id=f"rcpt_{len(self._receipts) + 1:06d}", idempotency_key=idempotency_key,
                 proposal_id=proposal_id, payee_id=payee_id, amount_minor=amount_minor, currency=currency,
-                source_account=source_account, debit_minor=debit_minor, rail_id=rail_id,
+                source_account=source_account, debit_minor=debit_minor, rail_id=rail_id, action_hash=action_hash,
                 executed_at=executed_at.isoformat(),
             )
             self._balances[source_account] = bal - debit_minor

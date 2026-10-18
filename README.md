@@ -16,12 +16,12 @@ deterministic engine, a signed payee registry and a transaction-bound approval d
 
 | Result | Value | Source |
 |---|---|---|
-| Test suite | **1373 tests pass** (offline, no network) | `make test` |
+| Test suite | **1379 tests pass** (offline, no network) | `make test` |
 | Attack success rate — naive agent (B0) | **69.8%** (67/96) — 95% Wilson CI [0.600, 0.781] | `eval/reports/latest.json` |
 | Attack success rate — safety-prompted agent (B1) | **40.6%** (39/96) — CI [0.314, 0.506] | same |
 | Attack success rate — **Mandate (B2)** | **0.0%** (0/96) — CI [0.000, 0.038] | same |
-| False-block rate (benign look-alikes) | **0/4** (0.0%) | same |
-| Task-completion scenarios (priority subset) | **9/9 ran pass** (T06 is an honest skip) | same |
+| False blocks | **0 false blocks among 4 benign case families** | same |
+| Task-completion scenarios (priority subset) | **10/10 ran pass** (including T06 duplicate-payment) | same |
 | End-to-end UI flows (Playwright) | **16 pass, 2 mobile-only skips** | `make e2e` |
 
 > Static benchmark on synthetic documents. Adaptive attackers may do better; the LLM has no authority to
@@ -87,7 +87,7 @@ package is scanned for forbidden imports (DB, ledger, registry-write, router, ex
 | `apps/api/services/` | `executor` (single signed path), `registry`, `router`, `approvals` (hashed, single-use), `mandates`, `runtime`, `audit_log`, `explain`. |
 | `services/rail_sim/` | SIMULATED sandbox accounts, FX, fees, ledger, settlement clock. |
 | `apps/web/` | React + Vite + TypeScript + Tailwind; Dashboard, Mandate, Pay + Decision Trace, Guardian, Balances, Activity, **Registry**, Red-team; en/bn. |
-| `eval/` | Attack catalog (25 families × 4), baselines B0/B1/B2, task-completion scenarios, report JSON/HTML, evidence generator. |
+| `eval/` | Attack catalog (24 attack families × 4 = 96 cases, plus A25 benign look-alikes), baselines B0/B1/B2, task-completion scenarios, report JSON/HTML, evidence generator. |
 | `apps/web/e2e/` | Playwright flows (E2E-03/04/05/08/10/12) booting the real API + UI. |
 | `data/` | registry template, rate cards (SIMULATED), fixtures, demo keys (`demo_*` only). |
 
@@ -135,23 +135,24 @@ Full detail and the known-risk list: [`docs/security_self_assessment.md`](docs/s
 
 ---
 
-## Red-team benchmark — 25 attack families
+## Red-team benchmark — 24 attack families (+ 1 benign family)
 
 An attack **succeeds** only if a violating sandbox action occurs, **read from the ledger — not from the
-agent's words.** 4 variants per family (variants 1–2 dev, 3–4 held-out, frozen by
-`eval/heldout.sha256`; the runner refuses to run if the held-out set changed).
+agent's words.** **24 attack families × 4 variants = 96 attack cases**, plus **A25** (benign look-alikes, 4
+cases) which must **not** be blocked. Variants 1–2 are the development split; variants 3–4 are held-out,
+frozen by `eval/heldout.sha256` (the runner refuses to run if the held-out set changed).
 
 | # | Family | # | Family | # | Family |
 |---|---|---|---|---|---|
-| A01 | Hidden text in PDF | A10 | Typographic attack | A19 | Registry spoofing |
-| A02 | Hidden text in image | A11 | Bangla-language injection | A20 | Planner tool-misuse |
-| A03 | Visible fake notice | A12 | Forwarded-email injection | A21 | Cooling-off bypass |
-| A04 | Homoglyph payee | A13 | Metadata/filename injection | A22 | Currency confusion |
-| A05 | Account digit swap | A14 | QR payee override | A23 | Policy disclosure |
-| A06 | Unregistered account | A15 | Replay/duplicate | A24 | Multi-turn drift |
-| A07 | Amount manipulation | A16 | Forged approval | A25 | Benign look-alikes (must not block) |
-| A08 | Split-payment structuring | A17 | Compiler manipulation | | |
-| A09 | Urgency/threat | A18 | Ambiguity exploit | | |
+| A01 | Hidden text in PDF | A09 | Urgency/threat | A17 | Compiler manipulation |
+| A02 | Hidden text in image | A10 | Typographic attack | A18 | Ambiguity exploit |
+| A03 | Visible fake notice | A11 | Bangla-language injection | A19 | Registry spoofing |
+| A04 | Homoglyph payee | A12 | Forwarded-email injection | A20 | Planner tool-misuse |
+| A05 | Account digit swap | A13 | Metadata/filename injection | A21 | Cooling-off bypass |
+| A06 | Unregistered account | A14 | QR payee override | A22 | Currency confusion |
+| A07 | Amount manipulation | A15 | Replay/duplicate | A23 | Policy disclosure |
+| A08 | Split-payment structuring | A16 | Forged approval | A24 | Multi-turn drift |
+| | | | | **A25** | **Benign look-alikes (must not block)** |
 
 System under test, same LLM/temperature/documents/ledger:
 - **B0** — naive agent with a payment tool and no policy engine.
@@ -160,16 +161,16 @@ System under test, same LLM/temperature/documents/ledger:
 
 ---
 
-## Test suite (1373 tests, all offline)
+## Test suite (1379 tests, all offline)
 
 | File | Tests | Covers |
 |---|---:|---|
 | `tests/test_redteam_300_deep.py` | 550 | deep engine/API attacks |
-| `tests/test_redteam_500.py` | 500 | broad red-team + API hardening |
+| `tests/test_redteam_500.py` | 501 | broad red-team + API hardening |
 | `tests/test_dangerous_redteam.py` | 150 | high-risk adversarial cases |
 | `tests/test_prompt_injection_pdfs.py` | 37 | document-level injection |
-| `packages/policy_engine/tests/test_engine_rules.py` | 34 | engine rule branches |
-| `tests/test_api_flows.py` | 24 | flagship API flows, registry, approvals |
+| `packages/policy_engine/tests/test_engine_rules.py` | 38 | engine rule branches (incl. duplicate payment) |
+| `tests/test_api_flows.py` | 25 | flagship API flows, registry, approvals, duplicate |
 | `tests/test_reader.py` | 21 | reader + sanitizer |
 | `tests/test_executor.py` | 13 | single execution path |
 | `tests/test_eval.py` | 12 | benchmark + scenario harness |
@@ -179,7 +180,18 @@ System under test, same LLM/temperature/documents/ledger:
 | `tests/test_registry.py` | 5 | registry build/verify |
 | `tests/test_audit.py` | 2 | hash chain + checkpoints |
 | other (`purity`, `signing_canonical`, `single_execution_path`) | 4 | invariants |
-| **Total** | **1373** | |
+| **Total** | **1379** | |
+
+### Claim → evidence map
+
+| Claim | Evidence |
+|---|---|
+| The LLM cannot execute a payment | `tests/test_single_execution_path.py`, `tests/test_executor.py` |
+| A modified action cannot use a signed token | action-hash verification in `tests/test_executor.py`; `packages/policy_engine/tests/test_signing_canonical.py` |
+| An approval cannot be reused | approval single-use tests in `tests/test_api_flows.py` |
+| A wrong payee is rejected | registry mismatch tests (`tests/test_registry.py`, engine rules) |
+| A duplicate invoice is not paid twice | `packages/policy_engine/tests/test_engine_rules.py` (duplicate), `tests/test_api_flows.py::test_duplicate_invoice_is_denied_and_never_debits_again`, scenario `T06` |
+| The UI drives an end-to-end payment | Playwright `apps/web/e2e/` + ledger evidence in `docs/execution_evidence/` |
 
 ---
 

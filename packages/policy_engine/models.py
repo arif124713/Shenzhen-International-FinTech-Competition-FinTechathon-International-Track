@@ -219,6 +219,10 @@ class Context(Strict):
     detector_flags: tuple[Anomaly, ...] = ()
     approvals: tuple[Approval, ...] = ()
     hold_started_at: datetime | None = None
+    # action_hash values already executed against the sandbox ledger. A proposal whose action_hash is here is a
+    # duplicate (same payee/amount/currency/debit/rail, a re-submitted invoice) and is DENIED (idempotency at the
+    # *decision* layer; the executor separately refuses a replayed token). Supplied by the ContextBuilder.
+    paid_action_hashes: tuple[str, ...] = ()
 
     _aw = field_validator("now", "hold_started_at")(_require_aware)
 

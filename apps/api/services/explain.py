@@ -33,6 +33,8 @@ REASON_TEXT: dict[str, dict[str, str]] = {
     "APPROVAL_REJECTED": {"en": "An approver rejected this payment.", "bn": "একজন অনুমোদনকারী এটি বাতিল করেছেন।"},
     "ACTION_NOT_SUPPORTED": {"en": "That action is not supported.", "bn": "এই কাজটি সমর্থিত নয়।"},
     "CAP_CURRENCY_UNSUPPORTED": {"en": "The currencies do not match your rule.", "bn": "মুদ্রা আপনার নিয়মের সাথে মেলে না।"},
+    "DUPLICATE_PAYMENT": {"en": "This invoice was already paid, so it was not sent again.",
+                          "bn": "এই ইনভয়েসটি আগেই পরিশোধ করা হয়েছে, তাই আবার পাঠানো হয়নি।"},
 }
 
 # User-facing verdict text (design.md §3). Shape + text + colour always travel together.

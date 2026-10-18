@@ -427,7 +427,7 @@ Each phase ends with a **demoable milestone** and a commit tagged `phase-N`.
 **Milestone M5:** a non-developer can run the full tuition story in the browser.
 
 ### Phase 6 — Benchmark and baselines (Day 4–5)
-- [ ] Attack generator → 100 cases from the 25 families in `testing.md` §6 (seeded).
+  - [x] Attack generator → 100 cases from the 24 attack families in `testing.md` §6 (seeded), plus 4 benign look-alikes.
 - [ ] Baselines: **B0** naive single agent with payment tool and no policy; **B1** same agent with a careful system prompt; **B2** Mandate.
 - [ ] Metrics: ASR, false-block rate, completion rate, per-family tables; report JSON + HTML page.
 - [ ] 30 task scenarios scripted and runnable headless.
@@ -524,7 +524,7 @@ See docs/bugs.md §5–6 and docs/security_self_assessment.md.
 
 ## 8. Presentation and video skeletons
 
-**Deck (≤10 min, 8 slides):** (1) The problem: AI that moves money can be talked into wrong payments. (2) Mandate in one sentence + live trust boundary diagram. (3) Story: tuition invoice, tampered vs genuine. (4) How decisions are made (engine, registry, tiers). (5) Task completion results (priority scenarios) and routing savings, stated as "versus a simulated, publicly calibrated default route, not live market data". (6) Security results (attack cases, baselines, failures). State the limits on the slide: "Static benchmark of 25 attack families; adaptive attackers may do better. The LLM has no authority to execute; a wrong-but-permitted extraction is a measured residual risk." (7) Innovation: Bangla intent compiler, guardian co-sign, decision trace, attestation prototype. (8) Limits, honest risks, next steps.
+**Deck (≤10 min, 8 slides):** (1) The problem: AI that moves money can be talked into wrong payments. (2) Mandate in one sentence + live trust boundary diagram. (3) Story: tuition invoice, tampered vs genuine. (4) How decisions are made (engine, registry, tiers). (5) Task completion results (priority scenarios) and routing savings, stated as "versus a simulated, publicly calibrated default route, not live market data". (6) Security results (attack cases, baselines, failures). State the limits on the slide: "Static benchmark of 24 attack families; adaptive attackers may do better. The LLM has no authority to execute; a wrong-but-permitted extraction is a measured residual risk." (7) Innovation: Bangla intent compiler, guardian co-sign, decision trace, attestation prototype. (8) Limits, honest risks, next steps.
 
 **Video (≤5 min):** 0:00 hook (invoice with hidden instruction) → 0:30 write rule in Bangla → 1:15 genuine invoice paid → 2:00 tampered invoice blocked, trace shown → 2:45 guardian approves a large transfer on phone view → 3:30 cheapest-rail comparison + multi-currency → 4:15 red-team report numbers → 4:45 limits and close.
 
@@ -534,7 +534,7 @@ See docs/bugs.md §5–6 and docs/security_self_assessment.md.
 
 Cut in this order; log each cut here with date/time.
 
-1. H1 plan reminders (soft nudge). 2. F2 attestation verify UI (keep JSON + CLI verify). 3. D3 alerts. 4. Playwright e2e (keep manual checklist). 5. Postgres/Docker polish (SQLite + `make dev` only). 6. Rail count 3 → 2. 7. Benchmark 100 → 60 cases (keep all 25 families, fewer variants). 8. NL rules 60 → 30. 9. Bangla UI strings → keep Bangla *input* and guardian page only. 10. Planner LangGraph → plain function chain.
+1. H1 plan reminders (soft nudge). 2. F2 attestation verify UI (keep JSON + CLI verify). 3. D3 alerts. 4. Playwright e2e (keep manual checklist). 5. Postgres/Docker polish (SQLite + `make dev` only). 6. Rail count 3 → 2. 7. Benchmark 100 → 60 cases (keep all 24 attack families, fewer variants). 8. NL rules 60 → 30. 9. Bangla UI strings → keep Bangla *input* and guardian page only. 10. Planner LangGraph → plain function chain.
 
 **Never cut:** policy engine + invariants tests, registry cross-check, isolated reader with schema output, audit log, decision trace, red-team report with baselines, security self-assessment, README with run instructions, sandbox logs, honest limitations section.
 

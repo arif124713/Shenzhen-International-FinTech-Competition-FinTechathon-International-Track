@@ -51,6 +51,37 @@
 
 _(Newest first.)_
 
+### BUG-011 · Duplicate payment was not prevented (T06 was an honest skip)
+- Date: 2026-10-18 · Severity: S1 · Area: policy_engine / scenarios · Source: external review
+- Finding: `docs/execution_evidence/index.md` showed scenario T06 (`Duplicate of an already-paid invoice`) as
+  `Actual: ALLOW/executed=True` with `Result: SKIP` — i.e. the same invoice could be paid twice, a direct
+  financial harm. Idempotency at the executor (token replay) and ledger (idempotency key) only stop the *same
+  token/key*; neither catches a **new request** for an already-paid invoice.
+- Fix: decision-layer idempotency. `Context.paid_action_hashes` is populated from the ledger's executed
+  receipts; `decide()` denies with `DUPLICATE_PAYMENT` when the proposal's `action_hash` is already paid.
+  `action_hash` excludes `proposal_id` (so a re-submitted invoice hashes identically) and binds payee + amount +
+  currency + debit + rail. Strictly additive: a new DENY reason, so no other rule is relaxed and no security
+  test was weakened.
+- Scope (honest): catches a repeated request for the same canonical action; does **not** do fuzzy
+  "same invoice with OCR/formatting variation" matching (documented limitation).
+- Evidence: scenario T06 now `first=ALLOW/executed=True, second=DENY/executed=False` → PASS; scenarios 10/10.
+- Regression tests: `packages/policy_engine/tests/test_engine_rules.py` (duplicate denied; keyed on action not
+  proposal_id; a different amount is not a duplicate; empty set → ALLOW),
+  `tests/test_api_flows.py::test_duplicate_invoice_is_denied_and_never_debits_again` (no second debit, one
+  ledger row).
+- Status: fixed
+
+### BUG-012 · Documentation factual inconsistency: attack-family count and results wording
+- Date: 2026-10-18 · Severity: S3 · Area: docs · Source: external review
+- Finding: README and other docs said "25 families × 4" while the report has **96 attack cases** (24 attack
+  families × 4), with **A25** being a benign look-alike family that must not be blocked; the false-block and
+  task-completion summaries were terse and could be read as over-claiming.
+- Fix: README now states "24 attack families × 4 = 96 cases + A25 benign look-alikes", gives CI bounds, phrases
+  the false-block result as "0 false blocks among 4 benign case families", and reports scenarios as
+  "10/10 ran pass". `docs/testing.md`, `docs/prd.md`, `docs/implementation_plan.md`, the ports evidence and the
+  deck wording are aligned to the same numbers.
+- Status: fixed
+
 ### BUG-010 · No UI to add a verified payee, and a new payee could never match the registry
 - Date: 2026-10-18 · Severity: S1 · Area: registry / planner / web
 - Found by: manual (the compiler says "add your university to the verified registry", but there is no way to do

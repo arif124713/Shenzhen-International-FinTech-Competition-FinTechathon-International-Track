@@ -1,5 +1,5 @@
 {
-  "run_id": "f9466a5c26e2",
+  "run_id": "1604c5c5a66b",
   "seed": 1337,
   "mode": "replay",
   "engine_version": "0.1.0",
@@ -354,11 +354,11 @@
   },
   "scenarios": {
     "total": 10,
-    "ran": 9,
-    "passed": 9,
+    "ran": 10,
+    "passed": 10,
     "by_category": {
       "T": [
-        4,
+        5,
         5
       ],
       "R": [
@@ -371,13 +371,7 @@
       ]
     },
     "failures": [],
-    "skipped": [
-      {
-        "id": "T06",
-        "name": "Duplicate of an already-paid invoice",
-        "note": "no duplicate rule in the closed set; not covered (documented gap, see bugs.md)"
-      }
-    ],
+    "skipped": [],
     "results": [
       {
         "id": "T01",
@@ -403,11 +397,11 @@
         "id": "T06",
         "category": "T",
         "name": "Duplicate of an already-paid invoice",
-        "expected": "Flagged duplicate; HOLD/ESCALATE (no second payment)",
-        "actual": "ALLOW/executed=True",
-        "passed": false,
-        "status": "skipped",
-        "note": "no duplicate rule in the closed set; not covered (documented gap, see bugs.md)"
+        "expected": "Second attempt DENY DUPLICATE_PAYMENT; no second payment",
+        "actual": "first=ALLOW/executed=True, second=DENY/executed=False",
+        "passed": true,
+        "status": "ran",
+        "note": "decision-layer idempotency keyed on action_hash (payee+amount+debit+rail)"
       },
       {
         "id": "T07",
@@ -482,5 +476,5 @@
     ]
   },
   "heldout_sha256": "a6819adebd7665ff8e2724331dc8469ad9960447b8cbfd2451e82b597d4303a4",
-  "generated_at": "2026-10-18T20:19:57.262912+00:00"
+  "generated_at": "2026-10-18T20:51:44.800602+00:00"
 }

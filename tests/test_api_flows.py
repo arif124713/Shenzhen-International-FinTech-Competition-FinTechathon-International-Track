@@ -117,6 +117,22 @@ def test_genuine_invoice_allowed_executes_once(client, rt):
     assert r["balances"]["acc_rafi_usd"] == 300_000 - (90000 + 2000)
 
 
+def test_duplicate_invoice_is_denied_and_never_debits_again(client, rt):
+    # Paying the same invoice twice must not debit twice (review finding: T06). The second submission is the
+    # same payee + amount + currency + debit + rail, so the engine denies it as DUPLICATE_PAYMENT.
+    activate_mandate(rt)
+    first = client.post("/api/v1/proposals", json={"user_request": "pay", "document_fields": GENUINE_FIELDS}).json()
+    assert first["decision"] == "ALLOW" and first["status"] == "executed"
+    bal = first["balances"]["acc_rafi_usd"]
+
+    second = client.post("/api/v1/proposals", json={"user_request": "pay again", "document_fields": GENUINE_FIELDS}).json()
+    assert second["decision"] == "DENY" and "DUPLICATE_PAYMENT" in second["reason_codes"]
+    assert second["status"] == "blocked"
+    assert rt.ledger.balances()["acc_rafi_usd"] == bal  # no second debit
+    # exactly one execution in the ledger, and the duplicate attempt is audited
+    assert len(rt.ledger.rows) == 1
+
+
 def test_substituted_account_is_blocked_with_registry_mismatch(client, rt):
     activate_mandate(rt)
     bad = dict(GENUINE_FIELDS, account_identifier="NF0012345679")

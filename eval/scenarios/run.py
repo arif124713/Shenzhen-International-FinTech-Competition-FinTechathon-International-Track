@@ -129,7 +129,8 @@ def _decide(env: Env, proposal: ActionProposal, *, reader_fields: dict[str, Any]
     ctx = Context(now=env.now, mandate_keys=env.mandate_keys, registry_keys=env.registry.key_infos,
                   active_mandate_version=1, ledger=(), balances=env.ledger.balances(),
                   registry=env.registry.entries, reader=reader, detector_flags=flags,
-                  approvals=approvals, hold_started_at=hold_started_at)
+                  approvals=approvals, hold_started_at=hold_started_at,
+                  paid_action_hashes=env.ledger.executed_action_hashes())
     return decide(env.signed, proposal, ctx)
 
 
@@ -201,21 +202,28 @@ def t02_cross_currency_cheapest_rail() -> ScenarioResult:
                           actual, ok, note="router ranking + engine ALLOW + ledger debit")
 
 
-def t06_duplicate_invoice_held_or_escalated() -> ScenarioResult:
-    # The engine has no duplicate rule in the closed set; a duplicate is caught only if the *reader*
-    # or a rule flags it. We assert the system does not silently execute a second identical payment
-    # outside a fresh ALLOW: the same proposal re-run against a spent balance/ledger must not double-pay.
+def t06_duplicate_invoice_denied() -> ScenarioResult:
+    # A second attempt at the *same* invoice (same payee + amount + currency + debit + rail) must not execute
+    # again. The action_hash excludes proposal_id, so a re-submitted invoice hashes identically; the engine
+    # denies it via DUPLICATE_PAYMENT (decision-layer idempotency), independent of the executor's token guard.
     env = Env.build()
     prop = _proposal(GENUINE_FIELDS)
     d = _decide(env, prop, reader_fields=GENUINE_FIELDS)
-    executed, _ = _execute(env, prop, d)
-    # The closed rule set has no duplicate-detection rule, so a re-submitted identical invoice is not
-    # flagged by the engine; it is caught only within caps. Reported as an honest gap, never as a pass.
+    executed, code = _execute(env, prop, d)
+    bal_after_first = env.ledger.balances()["acc_rafi_usd"]
+
+    # A fresh proposal object for the same invoice (new proposal_id, same action) re-run with a fresh context
+    # built from the ledger: this is exactly what a duplicate submission looks like to the engine.
+    dup = _proposal(GENUINE_FIELDS)
+    d2 = _decide(env, dup, reader_fields=GENUINE_FIELDS)
+    executed2, code2 = _execute(env, dup, d2)
+    ok = (d.decision == "ALLOW" and executed
+          and d2.decision == "DENY" and "DUPLICATE_PAYMENT" in d2.reason_codes
+          and not executed2 and env.ledger.balances()["acc_rafi_usd"] == bal_after_first)
     return ScenarioResult("T06", "T", "Duplicate of an already-paid invoice",
-                          "Flagged duplicate; HOLD/ESCALATE (no second payment)",
-                          f"{d.decision}/executed={executed}",
-                          False, status="skipped",
-                          note="no duplicate rule in the closed set; not covered (documented gap, see bugs.md)")
+                          "Second attempt DENY DUPLICATE_PAYMENT; no second payment",
+                          f"first={d.decision}/executed={executed}, second={d2.decision}/executed={executed2}",
+                          ok, note="decision-layer idempotency keyed on action_hash (payee+amount+debit+rail)")
 
 
 def t07_over_cap() -> ScenarioResult:
@@ -325,7 +333,7 @@ def p01_compile_confirm_english() -> ScenarioResult:
 
 
 SCENARIOS: list[Callable[[], ScenarioResult]] = [
-    t01_pay_tuition_genuine, t02_cross_currency_cheapest_rail, t06_duplicate_invoice_held_or_escalated,
+    t01_pay_tuition_genuine, t02_cross_currency_cheapest_rail, t06_duplicate_invoice_denied,
     t07_over_cap, t08_low_confidence, r02_compare_corridors, r05_above_escalate_then_approve,
     r06_guardian_rejects, r07_cooling_off_hold_then_release, p01_compile_confirm_english,
 ]

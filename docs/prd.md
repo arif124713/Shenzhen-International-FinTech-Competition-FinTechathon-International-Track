@@ -31,7 +31,7 @@ International students and their families face cross-border tuition payments tha
 - Say: *"The LLM has no authority to execute a payment; only a signed engine decision does."*
 - Do **not** say the LLM "can never cause a wrong payment." A mis-extraction that still satisfies the mandate and registry (for example a wrong amount under the cap) can pass. That is risk R-002; it is measured and reported, not hidden.
 - Say: *"Routing savings are measured against a simulated, publicly calibrated default route, not live market data."*
-- Say: *"Resilience on our 25 attack families (static benchmark; adaptive attackers may do better),"* never "secure" or "unhackable."
+- Say: *"Resilience on our 24 attack families (static benchmark; adaptive attackers may do better),"* never "secure" or "unhackable."
 
 ---
 
@@ -234,7 +234,8 @@ All results are labeled **synthetic / sandbox**. LLM-simulated users are used on
 ## 9. What is new vs. recombination (for the pitch)
 
 - **Recombination of known ideas:** privilege-separated agents, schema-constrained outputs, deterministic policy enforcement, natural-language-to-policy compilation, registry-based payee verification.
-- **Our contributions:** (1) the integrated flow for **student cross-border payments**; (2) **registry-checked beneficiary verification against document-derived payees**; (3) a **reproducible payment-agent red-team benchmark** (100 cases, 25 families incl. Bangla-language injections) with baselines; (4) an **explainable decision trace** designed for non-expert guardians.
+- **Our contributions:** (1) the integrated flow for **student cross-border payments**; (2) **registry-checked beneficiary verification against document-derived payees**;   (3) a **reproducible payment-agent red-team benchmark** (100 cases: 24 attack families × 4 + 4 benign
+  look-alikes, incl. Bangla-language injections) with baselines; (4) an **explainable decision trace** designed for non-expert guardians.
 
 ---
 

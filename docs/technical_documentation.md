@@ -100,12 +100,28 @@ currency, source_account, source_debit_minor, rail_id}`. A changed fee or debit 
 earlier ALLOW.
 
 ### 3.2 Single execution path (`apps/api/services/executor.py:execute()`)
-
 The executor accepts only `(proposal, decision_token)` and refuses unless **all** hold: signature valid and key
 active; `decision == ALLOW`; unexpired; nonce unused; `action_hash` recomputed from the proposal being executed
 equals the token's; the mandate version is still active; the registry entry is still valid. Any failure →
 no execution and an `EXEC_REFUSED` audit entry with a reason code. The nonce check, ledger write and nonce burn
 happen in one critical section (thread-safe).
+
+### 3.2b Duplicate payment — decision-layer idempotency (`policy_engine/decide.py`, `Context.paid_action_hashes`)
+
+Paying the same invoice twice is a direct financial harm, so it is prevented at the **decision** layer, not only
+at execution. `action_hash` binds payee + amount + currency + debit + rail and **excludes `proposal_id`**, so a
+re-submitted invoice (a new proposal object for the same underlying payment) hashes identically. The
+ContextBuilder populates `Context.paid_action_hashes` from the sandbox ledger's executed receipts; if the
+proposal's `action_hash` is in that set the engine returns **`DENY DUPLICATE_PAYMENT`** before any other rule.
+
+This is distinct from, and complements, two existing guards: the executor's `TOKEN_REPLAY` (stops the *same
+token* being reused) and the ledger's idempotency key (stops the *same key* debiting twice). Duplicate detection
+catches a **new request** for an already-paid invoice. It is strictly additive — a new DENY reason — so it never
+relaxes another rule.
+
+**Scope and honesty:** the match is on the canonical action (payee identifiers, amount, currency, debit, rail).
+It does **not** attempt fuzzy "same invoice with OCR variation / different formatting" matching, which would
+require the issuer, invoice reference and date and is a correctness risk; that remains a documented limitation.
 
 ### 3.3 Approvals are inputs, not bypasses (`apps/api/services/approvals.py`)
 

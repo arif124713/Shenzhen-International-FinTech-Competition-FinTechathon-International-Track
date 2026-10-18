@@ -97,7 +97,7 @@ def test_scenarios_priority_subset_runs_and_passes():
     from eval.scenarios.run import run as run_scenarios
 
     block = run_scenarios()
-    assert block["ran"] >= 8  # priority subset (T06 is an honest skip)
+    assert block["ran"] == block["total"] == 10  # every priority scenario now runs (T06 included)
     assert block["passed"] == block["ran"], block["failures"]
     assert set(block["by_category"]) <= {"T", "R", "M", "C", "P"}
 

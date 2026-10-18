@@ -77,7 +77,8 @@ class Executor:
                     idempotency_key=f"{p['action_hash']}:{p['nonce']}", proposal_id=proposal.proposal_id,
                     payee_id=proposal.payee_id, amount_minor=proposal.amount_minor, currency=proposal.currency,
                     category=proposal.category, source_account=proposal.source_account,
-                    debit_minor=proposal.source_debit_minor, rail_id=proposal.rail_id, executed_at=now)
+                    debit_minor=proposal.source_debit_minor, rail_id=proposal.rail_id,
+                    action_hash=p["action_hash"], executed_at=now)
             except InsufficientFunds:
                 raise self._refuse("INSUFFICIENT_FUNDS", proposal) from None
             self._used_nonces.add(p["nonce"])

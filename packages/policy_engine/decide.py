@@ -105,6 +105,19 @@ def decide(signed: SignedMandate, proposal: ActionProposal, ctx: Context) -> Dec
     if mandate.version != ctx.active_mandate_version:
         return early_deny("MANDATE_SUPERSEDED", f"v{mandate.version} is not the active version", mandate)
 
+    # ---- 1b. duplicate payment (idempotency at the decision layer) ----
+    # The action_hash binds payee + amount + currency + debit + rail and excludes proposal_id, so a re-submitted
+    # invoice yields the same hash. If that exact action already executed, deny it: no second debit, no second
+    # payment. This is strictly additive (a new DENY) and never relaxes another rule. (review finding: T06)
+    if ah in set(ctx.paid_action_hashes):
+        return _final(
+            "DENY", "T4", reason_codes=("DUPLICATE_PAYMENT",), input_hash=input_hash, action_hash=ah,
+            mandate_id=mandate.mandate_id, mandate_version=mandate.version,
+            trace=(TraceStep(step="integrity", result="pass", detail=f"mandate v{mandate.version} signature valid"),
+                   TraceStep(step="duplicate", result="deny",
+                             detail="this exact payment already executed (same payee, amount and debit)")),
+        )
+
     rules = sorted(mandate.rules, key=lambda r: r.id)  # rule order must not influence the outcome (I2)
     cosigners = tuple(sorted(c.id for c in mandate.co_signers))
     acc = _Acc()

@@ -54,6 +54,33 @@ def test_unknown_rule_type_fails_closed_not_crash():
     assert run(rules).reason_codes == ("MANDATE_INVALID",)
 
 
+# ---- duplicate payment (decision-layer idempotency) ----
+def test_duplicate_action_hash_is_denied():
+    prop = proposal()
+    d = run(prop=prop, paid_action_hashes=(action_hash(prop),))
+    assert d.decision == "DENY" and d.reason_codes == ("DUPLICATE_PAYMENT",)
+    assert any(t.step == "duplicate" for t in d.trace)
+
+
+def test_duplicate_check_is_keyed_on_the_action_not_the_proposal_id():
+    # a re-submitted invoice gets a new proposal_id but the same action_hash -> still a duplicate
+    first = proposal(proposal_id="p1")
+    again = proposal(proposal_id="p2")
+    assert action_hash(first) == action_hash(again)
+    assert run(prop=again, paid_action_hashes=(action_hash(first),)).reason_codes == ("DUPLICATE_PAYMENT",)
+
+
+def test_a_different_amount_after_a_payment_is_not_a_duplicate():
+    first = proposal(amount_minor=90000)
+    different = proposal(amount_minor=90001)
+    d = run(prop=different, paid_action_hashes=(action_hash(first),))
+    assert d.decision != "DENY" or "DUPLICATE_PAYMENT" not in d.reason_codes
+
+
+def test_no_paid_actions_means_no_duplicate_denial():
+    assert run(prop=proposal()).decision == "ALLOW"
+
+
 def test_superseded_mandate_denied():
     assert run(active_mandate_version=2).reason_codes == ("MANDATE_SUPERSEDED",)
 

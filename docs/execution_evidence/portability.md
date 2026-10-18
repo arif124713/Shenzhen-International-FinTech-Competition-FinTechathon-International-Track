@@ -9,9 +9,9 @@ Environment: Windows, Python 3.11+ from `.venv`, Node 22, PowerShell.
 
 | Command | Result |
 |---|---|
-| `python -m pytest` | **1358 passed** in ~4 s (offline; no network) |
+| `python -m pytest` | **1379 passed** in ~4 s (offline; no network) |
 | `python -m ruff check packages apps services tests eval` | **all checks passed** |
-| `python -m eval.attacks.generate` | wrote 100 cases (`eval/attacks/cases.json`) |
+| `python -m eval.attacks.generate` | wrote 100 cases (24 attack families × 4 + 4 benign) to `eval/attacks/cases.json` |
 | `python -m eval.run_eval` | wrote `eval/reports/latest.{json,html}` and `docs/execution_evidence/index.md` |
 | `python -m eval.evidence` | wrote audit export, ledger CSV, signed checkpoint, LLM config note |
 | `npx playwright test` (apps/web) | **16 passed, 2 skipped** (guardian flow is mobile-only by design) |
