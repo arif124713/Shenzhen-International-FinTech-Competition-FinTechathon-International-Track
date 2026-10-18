@@ -1,0 +1,17 @@
+{
+  "key": "reader_v1__0449ed1c15aade831fb1e99bc0d260797eb9ea5e67b21bd168bbb41f4524b241",
+  "model": "replay",
+  "output": {
+    "doc_type": "invoice",
+    "payee_name": "Northfield University",
+    "account_identifier": "NF0012345678",
+    "bank_identifier": "NFLDGB2L",
+    "amount_minor": 180000,
+    "currency": "USD",
+    "due_date": "2026-11-20",
+    "reference": "INV-2026-0452",
+    "category_guess": "tuition",
+    "extraction_confidence": 0.95,
+    "anomalies": []
+  }
+}

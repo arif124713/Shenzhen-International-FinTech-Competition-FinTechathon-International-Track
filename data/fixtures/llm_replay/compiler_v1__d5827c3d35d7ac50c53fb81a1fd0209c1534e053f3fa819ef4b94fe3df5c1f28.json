@@ -1,0 +1,59 @@
+{
+  "key": "compiler_v1__d5827c3d35d7ac50c53fb81a1fd0209c1534e053f3fa819ef4b94fe3df5c1f28",
+  "model": "replay",
+  "output": {
+    "status": "ok",
+    "base_currency": "BDT",
+    "co_signers": [
+      {
+        "id": "u_ammu",
+        "name": "Ammu",
+        "lang": "bn"
+      }
+    ],
+    "rules": [
+      {
+        "id": "R01",
+        "type": "category_allow",
+        "categories": [
+          "rent",
+          "tuition"
+        ]
+      },
+      {
+        "id": "R02",
+        "type": "require_registry_match",
+        "categories": [
+          "rent",
+          "tuition"
+        ]
+      },
+      {
+        "id": "R03",
+        "type": "cap",
+        "scope": "per_tx",
+        "amount_minor": 200000,
+        "currency": "USD",
+        "categories": [
+          "*"
+        ],
+        "hard": true
+      },
+      {
+        "id": "R04",
+        "type": "min_confidence",
+        "value_bp": 9000
+      },
+      {
+        "id": "R99",
+        "type": "block_anomalies",
+        "anomalies": [
+          "HIDDEN_TEXT",
+          "INSTRUCTION_LIKE_TEXT",
+          "PAYEE_CHANGE_NOTICE"
+        ]
+      }
+    ],
+    "back_translation": "Allow rent and tuition, to verified payees, up to USD 2,000 per payment."
+  }
+}

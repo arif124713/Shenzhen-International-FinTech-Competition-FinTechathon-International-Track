@@ -1,0 +1,59 @@
+{
+  "key": "compiler_v1__082d032f11c6a8815897d9a5c2468c625acd4841d9a8a4e4c0f954531b79b2f9",
+  "model": "replay",
+  "output": {
+    "status": "ok",
+    "base_currency": "BDT",
+    "co_signers": [
+      {
+        "id": "u_ammu",
+        "name": "Ammu",
+        "lang": "bn"
+      }
+    ],
+    "rules": [
+      {
+        "id": "R01",
+        "type": "category_allow",
+        "categories": [
+          "family_support"
+        ]
+      },
+      {
+        "id": "R02",
+        "type": "cap",
+        "scope": "per_tx",
+        "amount_minor": 100000,
+        "currency": "USD",
+        "categories": [
+          "*"
+        ],
+        "hard": true
+      },
+      {
+        "id": "R03",
+        "type": "escalate_above",
+        "amount_minor": 50000,
+        "currency": "USD",
+        "approvers": [
+          "u_ammu"
+        ]
+      },
+      {
+        "id": "R04",
+        "type": "min_confidence",
+        "value_bp": 9000
+      },
+      {
+        "id": "R99",
+        "type": "block_anomalies",
+        "anomalies": [
+          "HIDDEN_TEXT",
+          "INSTRUCTION_LIKE_TEXT",
+          "PAYEE_CHANGE_NOTICE"
+        ]
+      }
+    ],
+    "back_translation": "Allow family support only, up to USD 1,000 per payment; above USD 500 needs Ammu's approval."
+  }
+}

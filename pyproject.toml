@@ -1,0 +1,29 @@
+[project]
+name = "mandate"
+version = "0.1.0"
+description = "Mandate: a payment-intent firewall for student cross-border payments (simulated)"
+requires-python = ">=3.11"
+dependencies = [
+  "pydantic>=2.6,<3",
+  "cryptography>=42",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "hypothesis>=6.100", "ruff>=0.5", "mypy>=1.10"]
+
+[tool.pytest.ini_options]
+pythonpath = ["packages", "services", "apps", "."]
+testpaths = ["packages", "tests"]
+addopts = "-q"
+filterwarnings = [
+    "ignore:Please use `import python_multipart` instead:PendingDeprecationWarning",
+    "ignore:The 'app' shortcut is now deprecated:DeprecationWarning",
+]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+ignore = ["E501", "E701", "E702", "UP017"]

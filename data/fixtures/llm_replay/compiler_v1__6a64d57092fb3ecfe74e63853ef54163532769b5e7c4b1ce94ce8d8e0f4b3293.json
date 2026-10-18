@@ -1,0 +1,80 @@
+{
+  "key": "compiler_v1__6a64d57092fb3ecfe74e63853ef54163532769b5e7c4b1ce94ce8d8e0f4b3293",
+  "model": "replay",
+  "output": {
+    "status": "ok",
+    "base_currency": "BDT",
+    "co_signers": [
+      {
+        "id": "u_ammu",
+        "name": "Ammu",
+        "lang": "bn"
+      }
+    ],
+    "rules": [
+      {
+        "id": "R01",
+        "type": "category_allow",
+        "categories": [
+          "tuition"
+        ]
+      },
+      {
+        "id": "R02",
+        "type": "require_registry_match",
+        "categories": [
+          "tuition"
+        ]
+      },
+      {
+        "id": "R03",
+        "type": "cap",
+        "scope": "per_tx",
+        "amount_minor": 500000,
+        "currency": "USD",
+        "categories": [
+          "*"
+        ],
+        "hard": true
+      },
+      {
+        "id": "R04",
+        "type": "escalate_above",
+        "amount_minor": 120000,
+        "currency": "USD",
+        "approvers": [
+          "u_ammu"
+        ]
+      },
+      {
+        "id": "R05",
+        "type": "new_payee",
+        "action": "ESCALATE",
+        "approvers": [
+          "u_ammu"
+        ]
+      },
+      {
+        "id": "R06",
+        "type": "cooling_off",
+        "applies_to": "new_payee",
+        "hours": 24
+      },
+      {
+        "id": "R07",
+        "type": "min_confidence",
+        "value_bp": 9000
+      },
+      {
+        "id": "R08",
+        "type": "block_anomalies",
+        "anomalies": [
+          "HIDDEN_TEXT",
+          "INSTRUCTION_LIKE_TEXT",
+          "PAYEE_CHANGE_NOTICE"
+        ]
+      }
+    ],
+    "back_translation": "Pay tuition only, to a verified university, up to USD 5,000 per payment. Amounts over USD 1,200 need Ammu's approval. New payees wait 24 hours."
+  }
+}

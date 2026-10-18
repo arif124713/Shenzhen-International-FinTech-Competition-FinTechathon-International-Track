@@ -1,0 +1,17 @@
+[
+  {
+    "seq": 0,
+    "ts": "2026-10-18T20:19:58.781039+00:00",
+    "actor": "executor",
+    "event_type": "EXEC_OK",
+    "payload": {
+      "proposal_id": "p_62e6157fd9ba",
+      "action_hash": "be72132d917cda27ad2d0d864a54984a35dfe258b3b55e874c8bc1fd968b94c9",
+      "nonce": "n_83d89e27b32642ad",
+      "receipt_id": "rcpt_000001",
+      "simulated": true
+    },
+    "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "hash": "a0eb867e44d436f7534df3d3d87b03565d69e3fc1983cfbcee214b5d503cf075"
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "key": "compiler_v1__default",
+  "model": "replay",
+  "output": {
+    "status": "refused",
+    "refusal_reason": "NOT_EXPRESSIBLE",
+    "clarification": "I can't set a rule by name alone, because names are easy to fake \u2014 institutions are matched through the verified registry, not by a name you type. I can set amount and category rules now, for example: 'allow tuition, up to 2000 USD per payment, over 1200 USD needs approval'."
+  }
+}

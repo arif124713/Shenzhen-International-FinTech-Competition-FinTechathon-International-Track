@@ -1,0 +1,52 @@
+{
+  "key": "compiler_v1__6a0902fcc0ec889ecf2fbadb1154a49ec91dd1d61c0dfb708b8177d007792b39",
+  "model": "replay",
+  "output": {
+    "status": "ok",
+    "base_currency": "BDT",
+    "co_signers": [
+      {
+        "id": "u_ammu",
+        "name": "Ammu",
+        "lang": "bn"
+      }
+    ],
+    "rules": [
+      {
+        "id": "R01",
+        "type": "category_allow",
+        "categories": [
+          "tuition",
+          "rent",
+          "family_support"
+        ]
+      },
+      {
+        "id": "R02",
+        "type": "cap",
+        "scope": "per_tx",
+        "amount_minor": 200000,
+        "currency": "USD",
+        "categories": [
+          "*"
+        ],
+        "hard": true
+      },
+      {
+        "id": "R03",
+        "type": "min_confidence",
+        "value_bp": 9000
+      },
+      {
+        "id": "R99",
+        "type": "block_anomalies",
+        "anomalies": [
+          "HIDDEN_TEXT",
+          "INSTRUCTION_LIKE_TEXT",
+          "PAYEE_CHANGE_NOTICE"
+        ]
+      }
+    ],
+    "back_translation": "Allow tuition, rent and family support up to USD 2,000 per payment."
+  }
+}

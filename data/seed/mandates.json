@@ -1,0 +1,87 @@
+{
+  "_comment": "SIMULATED dummy mandates for manual testing. Demo signing key is server-held; use scripts/seed_mandate.py or POST /api/v1/mandates/confirm. No real money, no real policy.",
+  "registry_entity_id": "reg_northfield_univ",
+  "registry_legal_name": "Northfield University",
+  "registry_account_identifier": "NF0012345678",
+  "registry_bank_identifier": "NFLDGB2L",
+  "mandates": {
+    "tuition_strict": {
+      "mandate_id": "m_rafi_strict",
+      "owner_id": "u_rafi",
+      "base_currency": "BDT",
+      "co_signers": [{"id": "u_ammu", "name": "Ammu", "lang": "bn"}],
+      "created_at": "2026-10-18T00:00:00+00:00",
+      "rules": [
+        {"id": "R01", "type": "category_allow", "categories": ["tuition"]},
+        {"id": "R02", "type": "require_registry_match", "categories": ["tuition"]},
+        {"id": "R03", "type": "cap", "scope": "per_tx", "amount_minor": 200000, "currency": "USD", "categories": ["*"], "hard": true},
+        {"id": "R04", "type": "cap", "scope": "rolling_30d", "amount_minor": 500000, "currency": "USD", "categories": ["*"], "hard": true},
+        {"id": "R05", "type": "escalate_above", "amount_minor": 120000, "currency": "USD", "approvers": ["u_ammu"]},
+        {"id": "R06", "type": "new_payee", "action": "ESCALATE", "approvers": ["u_ammu"]},
+        {"id": "R07", "type": "cooling_off", "applies_to": "new_payee", "hours": 24},
+        {"id": "R08", "type": "min_confidence", "value_bp": 9000},
+        {"id": "R09", "type": "block_anomalies", "anomalies": ["HIDDEN_TEXT", "INSTRUCTION_LIKE_TEXT", "PAYEE_CHANGE_NOTICE"]},
+        {"id": "R10", "type": "rail_allow", "rail_ids": ["rail_a_bank", "rail_b_wallet"]}
+      ]
+    },
+    "student_allowance": {
+      "mandate_id": "m_rafi_allowance",
+      "owner_id": "u_rafi",
+      "base_currency": "BDT",
+      "co_signers": [{"id": "u_ammu", "name": "Ammu", "lang": "bn"}],
+      "created_at": "2026-10-18T00:00:00+00:00",
+      "rules": [
+        {"id": "R01", "type": "category_allow", "categories": ["tuition", "rent", "family_support", "insurance"]},
+        {"id": "R02", "type": "require_registry_match", "categories": ["tuition", "rent"]},
+        {"id": "R03", "type": "payee_allowlist", "payee_ids": ["reg_northfield_univ", "usr_ammu", "usr_landlord"]},
+        {"id": "R04", "type": "cap", "scope": "per_tx", "amount_minor": 100000, "currency": "USD", "categories": ["*"], "hard": true},
+        {"id": "R05", "type": "escalate_above", "amount_minor": 50000, "currency": "USD", "approvers": ["u_ammu"]},
+        {"id": "R06", "type": "min_confidence", "value_bp": 9000},
+        {"id": "R07", "type": "block_anomalies", "anomalies": ["HIDDEN_TEXT", "INSTRUCTION_LIKE_TEXT", "PAYEE_CHANGE_NOTICE"]},
+        {"id": "R08", "type": "rail_allow", "rail_ids": ["rail_a_bank", "rail_b_wallet"]}
+      ]
+    },
+    "locked_down": {
+      "mandate_id": "m_rafi_locked",
+      "owner_id": "u_rafi",
+      "base_currency": "BDT",
+      "co_signers": [{"id": "u_ammu", "name": "Ammu", "lang": "bn"}],
+      "created_at": "2026-10-18T00:00:00+00:00",
+      "rules": [
+        {"id": "R01", "type": "category_allow", "categories": ["tuition"]},
+        {"id": "R02", "type": "require_registry_match", "categories": ["tuition"]},
+        {"id": "R03", "type": "cap", "scope": "per_tx", "amount_minor": 50000, "currency": "USD", "categories": ["*"], "hard": true},
+        {"id": "R04", "type": "min_confidence", "value_bp": 9900},
+        {"id": "R05", "type": "block_anomalies", "anomalies": ["HIDDEN_TEXT", "INSTRUCTION_LIKE_TEXT", "PAYEE_CHANGE_NOTICE"]},
+        {"id": "R06", "type": "rail_allow", "rail_ids": ["rail_a_bank"]}
+      ]
+    },
+    "escalate_everything": {
+      "mandate_id": "m_rafi_supervise",
+      "owner_id": "u_rafi",
+      "base_currency": "BDT",
+      "co_signers": [{"id": "u_ammu", "name": "Ammu", "lang": "bn"}, {"id": "u_baba", "name": "Baba", "lang": "en"}],
+      "created_at": "2026-10-18T00:00:00+00:00",
+      "rules": [
+        {"id": "R01", "type": "category_allow", "categories": ["tuition", "rent", "family_support", "insurance", "other"]},
+        {"id": "R02", "type": "cap", "scope": "per_tx", "amount_minor": 500000, "currency": "USD", "categories": ["*"], "hard": true},
+        {"id": "R03", "type": "escalate_above", "amount_minor": 1, "currency": "USD", "approvers": ["u_ammu", "u_baba"]},
+        {"id": "R04", "type": "new_payee", "action": "ESCALATE", "approvers": ["u_ammu", "u_baba"]},
+        {"id": "R05", "type": "cooling_off", "applies_to": "new_payee", "hours": 24},
+        {"id": "R06", "type": "min_confidence", "value_bp": 9000},
+        {"id": "R07", "type": "block_anomalies", "anomalies": ["HIDDEN_TEXT", "INSTRUCTION_LIKE_TEXT", "PAYEE_CHANGE_NOTICE"]},
+        {"id": "R08", "type": "rail_allow", "rail_ids": ["rail_a_bank", "rail_b_wallet"]}
+      ]
+    },
+    "deny_all": {
+      "mandate_id": "m_rafi_denyall",
+      "owner_id": "u_rafi",
+      "base_currency": "BDT",
+      "co_signers": [],
+      "created_at": "2026-10-18T00:00:00+00:00",
+      "rules": [
+        {"id": "R01", "type": "block_anomalies", "anomalies": ["HIDDEN_TEXT", "INSTRUCTION_LIKE_TEXT", "PAYEE_CHANGE_NOTICE"]}
+      ]
+    }
+  }
+}

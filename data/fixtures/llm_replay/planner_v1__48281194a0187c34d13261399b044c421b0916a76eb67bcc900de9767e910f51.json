@@ -1,0 +1,21 @@
+{
+  "key": "planner_v1__48281194a0187c34d13261399b044c421b0916a76eb67bcc900de9767e910f51",
+  "model": "replay",
+  "output": {
+    "action": "pay",
+    "category": "tuition",
+    "payee_id": "reg_northfield_univ",
+    "payee_ref": {
+      "payee_name": "Northfield University",
+      "account_identifier": "NF0012345678",
+      "bank_identifier": "NFLDGB2L"
+    },
+    "amount_minor": 90000,
+    "currency": "USD",
+    "source_account": "acc_rafi_usd",
+    "source_debit_minor": 92000,
+    "rail_id": "rail_a_bank",
+    "urgency": "normal",
+    "doc_ref": "doc1"
+  }
+}

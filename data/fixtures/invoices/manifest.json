@@ -1,0 +1,91 @@
+[
+  {
+    "file": "inv_genuine_northfield.pdf",
+    "sha256": "31273235ff049e712467f83c190dc65018b42bd28425ee7234e8d1fe3290df12",
+    "gold": {
+      "doc_type": "invoice",
+      "payee_name": "Northfield University",
+      "account_identifier": "NF0012345678",
+      "bank_identifier": "NFLDGB2L",
+      "amount_minor": 90000,
+      "currency": "USD",
+      "due_date": "2026-11-05",
+      "reference": "INV-2026-0451",
+      "category_guess": "tuition",
+      "extraction_confidence": 0.96,
+      "anomalies": []
+    }
+  },
+  {
+    "file": "inv_large_amount.pdf",
+    "sha256": "7f9fffb72a25869197793ab23b598a705dfa275ff94bef01c8d6a9325c90f839",
+    "gold": {
+      "doc_type": "invoice",
+      "payee_name": "Northfield University",
+      "account_identifier": "NF0012345678",
+      "bank_identifier": "NFLDGB2L",
+      "amount_minor": 180000,
+      "currency": "USD",
+      "due_date": "2026-11-20",
+      "reference": "INV-2026-0452",
+      "category_guess": "tuition",
+      "extraction_confidence": 0.95,
+      "anomalies": []
+    }
+  },
+  {
+    "file": "inv_substituted_account.pdf",
+    "sha256": "ad744928f64251d9bfed965169ed2d65fbaa288cdd7b0a55db15c0ffc4abe6ce",
+    "gold": {
+      "doc_type": "invoice",
+      "payee_name": "Northfield University",
+      "account_identifier": "NF0012345679",
+      "bank_identifier": "NFLDGB2L",
+      "amount_minor": 90000,
+      "currency": "USD",
+      "due_date": "2026-11-05",
+      "reference": "INV-2026-0453",
+      "category_guess": "tuition",
+      "extraction_confidence": 0.95,
+      "anomalies": []
+    }
+  },
+  {
+    "file": "inv_hidden_text.pdf",
+    "sha256": "54e4bebc3738e896b9ef8b7b0e133125a1a3edd929383a918c15f71a41c7bbb9",
+    "gold": {
+      "doc_type": "invoice",
+      "payee_name": "Northfield University",
+      "account_identifier": "NF0012345678",
+      "bank_identifier": "NFLDGB2L",
+      "amount_minor": 90000,
+      "currency": "USD",
+      "due_date": "2026-11-05",
+      "reference": "INV-2026-0454",
+      "category_guess": "tuition",
+      "extraction_confidence": 0.94,
+      "anomalies": [
+        "INSTRUCTION_LIKE_TEXT"
+      ]
+    }
+  },
+  {
+    "file": "inv_payee_change.pdf",
+    "sha256": "83b8f77c0d7d8c4e2839f33100b74575e2b1fe1acacb5442735cd487ddacaff3",
+    "gold": {
+      "doc_type": "invoice",
+      "payee_name": "Northfield University",
+      "account_identifier": "NF0012345678",
+      "bank_identifier": "NFLDGB2L",
+      "amount_minor": 90000,
+      "currency": "USD",
+      "due_date": "2026-11-05",
+      "reference": "INV-2026-0455",
+      "category_guess": "tuition",
+      "extraction_confidence": 0.93,
+      "anomalies": [
+        "PAYEE_CHANGE_NOTICE"
+      ]
+    }
+  }
+]

@@ -1,0 +1,17 @@
+{
+  "key": "reader_v1__default",
+  "model": "replay",
+  "output": {
+    "doc_type": "unknown",
+    "payee_name": "Unknown",
+    "account_identifier": "UNKNOWN",
+    "bank_identifier": "UNKNOWN",
+    "amount_minor": 1,
+    "currency": "USD",
+    "due_date": null,
+    "reference": "",
+    "category_guess": "other",
+    "extraction_confidence": 0.1,
+    "anomalies": []
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "doc_type": "invoice",
+  "payee_name": "Northfield University",
+  "account_identifier": "NF0012345678",
+  "bank_identifier": "NFLDGB2L",
+  "amount_minor": 90000,
+  "currency": "USD",
+  "due_date": "2026-11-05",
+  "reference": "INV-2026-0451",
+  "category_guess": "tuition",
+  "extraction_confidence": 0.96,
+  "anomalies": []
+}

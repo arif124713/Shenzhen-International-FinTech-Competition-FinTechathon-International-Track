@@ -1,0 +1,33 @@
+{
+  "_comment": "SIMULATED demo registry. A signature proves a record was not altered; it does NOT prove the institution is genuine (PRD section 4.7).",
+  "registry_version": "2026-10-18",
+  "keys": {
+    "demo_registry_k1": {
+      "public_key_b64": "REPLACED_BY_SETUP",
+      "status": "active"
+    }
+  },
+  "entries": [
+    {
+      "body": {
+        "entity_id": "reg_northfield_univ",
+        "legal_name": "Northfield University",
+        "account_identifier": "NF0012345678",
+        "bank_identifier": "NFLDGB2L",
+        "provenance": {
+          "method": "demo: team-enrolled from the institution's published payment page",
+          "source_url": "https://example.invalid/northfield/payments",
+          "retrieved_on": "2026-10-18",
+          "second_check": "none"
+        },
+        "enrolled_by": "team",
+        "valid_from": "2026-10-01T00:00:00+00:00",
+        "valid_to": "2027-10-01T00:00:00+00:00",
+        "revoked_at": null,
+        "registry_version": "2026-10-18",
+        "signer_key_id": "demo_registry_k1"
+      },
+      "signature": "REPLACED_BY_SETUP"
+    }
+  ]
+}

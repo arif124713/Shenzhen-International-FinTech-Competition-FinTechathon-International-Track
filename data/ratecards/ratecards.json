@@ -1,0 +1,66 @@
+{
+  "_comment": "SIMULATED rate cards. Values are illustrative and calibrated to public remittance-cost literature; they are NOT live provider quotes (PRD §4.3, CLAUDE.md §9).",
+  "default_rail_id": "rail_default_wire",
+  "rails": [
+    {
+      "rail_id": "rail_a_bank",
+      "label": "Bank transfer",
+      "supports": ["BDT>USD", "USD>BDT", "BDT>GBP", "BDT>EUR"],
+      "fixed_fee_minor": 1200,
+      "pct_fee": "0.005",
+      "fx_rate": "0.0091",
+      "eta_hours": 24,
+      "intermediary_fee_minor": 500,
+      "receiving_bank_fee_minor": 300,
+      "source_url": "https://example.invalid/ratecards/bank-wire",
+      "source_date": "2026-10-01",
+      "assumptions": "Fee and spread illustrative, calibrated to the World Bank Remittance Prices Worldwide band for bank wires.",
+      "limitations": "Not a live quote; introduced for simulation only."
+    },
+    {
+      "rail_id": "rail_b_wallet",
+      "label": "Mobile wallet",
+      "supports": ["BDT>USD", "USD>BDT"],
+      "fixed_fee_minor": 300,
+      "pct_fee": "0.008",
+      "fx_rate": "0.00925",
+      "eta_hours": 2,
+      "intermediary_fee_minor": 0,
+      "receiving_bank_fee_minor": 100,
+      "source_url": "https://example.invalid/ratecards/wallet",
+      "source_date": "2026-10-01",
+      "assumptions": "Lower fixed fee, slightly worse spread, faster settlement; illustrative.",
+      "limitations": "Not a live quote; introduced for simulation only."
+    },
+    {
+      "rail_id": "rail_c_card",
+      "label": "Card network",
+      "supports": ["BDT>USD"],
+      "fixed_fee_minor": 200,
+      "pct_fee": "0.011",
+      "fx_rate": "0.00905",
+      "eta_hours": 6,
+      "intermediary_fee_minor": 0,
+      "receiving_bank_fee_minor": 150,
+      "source_url": "https://example.invalid/ratecards/card",
+      "source_date": "2026-10-01",
+      "assumptions": "Highest percentage fee; illustrative.",
+      "limitations": "Not a live quote; introduced for simulation only."
+    },
+    {
+      "rail_id": "rail_default_wire",
+      "label": "Standard bank wire (default baseline)",
+      "supports": ["BDT>USD", "USD>BDT", "BDT>GBP", "BDT>EUR"],
+      "fixed_fee_minor": 2500,
+      "pct_fee": "0.010",
+      "fx_rate": "0.0089",
+      "eta_hours": 48,
+      "intermediary_fee_minor": 1000,
+      "receiving_bank_fee_minor": 500,
+      "source_url": "https://example.invalid/ratecards/default-wire",
+      "source_date": "2026-10-01",
+      "assumptions": "Transparent 'standard bank wire' baseline used only to compute savings; a stated fee, not an arbitrary expensive route.",
+      "limitations": "Not a live quote; introduced for simulation only."
+    }
+  ]
+}

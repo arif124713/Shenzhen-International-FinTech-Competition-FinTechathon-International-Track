@@ -1,0 +1,1 @@
+"""Attack catalog and generator."""

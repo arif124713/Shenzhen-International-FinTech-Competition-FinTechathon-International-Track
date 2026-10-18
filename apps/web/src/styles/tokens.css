@@ -1,0 +1,46 @@
+/* Design tokens (design.md §2). Never hard-code hex in components. */
+:root {
+  --ground: #edf0f2;
+  --surface: #ffffff;
+  --surface-sunk: #e3e8ec;
+  --ink: #14212b;
+  --ink-muted: #4a5b68;
+  --line: #c5cfd6;
+  --seal: #0b6e6e;
+  --seal-tint: #dcefef;
+  --hold: #8a5a00;
+  --hold-fill: #b7791f;
+  --hold-tint: #f6ebd3;
+  --deny: #b3261e;
+  --deny-tint: #f8e1df;
+  --untrusted: #5b4b8a;
+  --untrusted-tint: #ece8f5;
+  --sim: #3f4b55;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Schibsted Grotesk", "Hind Siliguri", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .tnum {
+    font-variant-numeric: tabular-nums;
+  }
+  :focus-visible {
+    outline: 2px solid var(--seal);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
