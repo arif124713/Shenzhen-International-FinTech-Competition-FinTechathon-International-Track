@@ -230,16 +230,24 @@ best-effort parse). Only synthetic documents ever leave the machine.
 `make eval` runs, offline and deterministically (`EVAL_SEED=1337`):
 
 - **Red-team benchmark** (`eval/run_eval.py`): 96 attack cases (24 families × 4) plus 4 benign look-alikes,
-  against **B0** (naive agent), **B1** (prompted agent) and **B2** (Mandate). An attack succeeds only if a
-  **violating ledger action** occurs — measured from the ledger, not from the agent's words.
+  against **B0** (no-policy baseline), **B1** (prompt-only baseline) and **B2** (Mandate). An attack succeeds
+  only if a **violating ledger action** occurs — measured from the ledger, not from the agent's words.
+  **Important:** this is an **engine-level** benchmark — each case supplies a labelled `ReaderOutput` and
+  anomaly flags, so the result measures the deterministic engine *given correct fields*. B0/B1 are structural
+  baselines (deterministic doubles in replay mode), not hosted-model agents; it is **not** a live-LLM
+  end-to-end evaluation.
+- **Reader/detector evaluation** (`eval/reader_eval.py`): the front of the pipeline (real upload → detectors →
+  reader) on the labelled invoice set — the layer the engine benchmark does not cover.
 - **Task-completion scenarios** (`eval/scenarios/run.py`): the priority subset (T01, T02, T06, T07, T08, R02,
   R05, R06, R07, P01) run headless against the real engine, registry, executor, router and audit log.
 - **Evidence index** (`docs/execution_evidence/index.md`): maps every scenario id and attack family to its
   result.
 
-Measured on this repo (`eval/reports/latest.json`, replay mode): attack success rate **B0 69.8% · B1 40.6% ·
-Mandate 0%** (96 attack cases; 95% Wilson CI [0, 0.039]); false-block rate 0%. This is a **static** benchmark
-on synthetic documents; adaptive attackers may do better (R-003, R-025).
+Measured on this repo (`eval/reports/latest.json`, replay mode): **engine-level** attack success **B0 69.8% ·
+B1 40.6% · Mandate 0%** (96 attack cases; 95% Wilson CI [0, 0.039]); false-block result 0/4. Reader/detector
+layer: anomalies caught 2/2, genuine documents clean 3/3, field agreement 9/9. This is a **static**,
+synthetic, **replay** benchmark; adaptive attackers may do better (R-003), and a live-LLM run is a documented
+to-do (R-012), not completed evidence.
 
 ---
 

@@ -116,3 +116,20 @@ def test_scenarios_never_silently_pass_a_skip():
     for r in block["results"]:
         if r["status"] == "skipped":
             assert r["passed"] is False
+
+
+def test_reader_detector_eval_catches_anomalies_and_keeps_genuine_docs_clean(monkeypatch):
+    # The layer the engine-level 0% does NOT cover: real upload -> detectors -> reader on the labelled set.
+    monkeypatch.setenv("LLM_PROVIDER", "replay")
+    from eval.reader_eval import run as run_reader_eval
+
+    block = run_reader_eval()
+    assert block["documents"] == 5
+    assert block["detector_recall"]["caught"] == block["detector_recall"]["total"] >= 1  # no missed attack
+    assert block["detector_false_positives"]["clean"] == block["detector_false_positives"]["total"]  # no FP
+
+
+def test_reader_eval_is_wired_into_the_report():
+    report = run()
+    assert report["reader_eval"]["documents"] == 5
+    assert report["reader_eval"]["detector_recall"]["caught"] >= 1

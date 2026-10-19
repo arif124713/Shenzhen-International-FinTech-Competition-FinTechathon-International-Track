@@ -1,17 +1,17 @@
 [
   {
     "seq": 0,
-    "ts": "2026-10-18T21:20:55.514286+00:00",
+    "ts": "2026-10-19T07:34:52.412465+00:00",
     "actor": "executor",
     "event_type": "EXEC_OK",
     "payload": {
-      "proposal_id": "p_27d3a4edcfb0",
+      "proposal_id": "p_becb8b64a534",
       "action_hash": "be72132d917cda27ad2d0d864a54984a35dfe258b3b55e874c8bc1fd968b94c9",
-      "nonce": "n_a21db5f700b0425b",
+      "nonce": "n_5546ff92439741e6",
       "receipt_id": "rcpt_000001",
       "simulated": true
     },
     "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
-    "hash": "729493f81b18f7106873abb9465b5c24301d4b6d3e4200da22aa68ee04102975"
+    "hash": "6a2fcd09ae7d339c73a4eccd5e6e886431325cdd60ac095c930a6534e3e30e80"
   }
 ]

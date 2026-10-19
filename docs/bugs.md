@@ -51,6 +51,32 @@
 
 _(Newest first.)_
 
+### BUG-013 · Benchmark claims overstated what the code measures (review credibility fix)
+- Date: 2026-10-18 · Severity: S1 (credibility) · Area: eval / docs · Source: two external reviews
+- Finding: the README headline "B0 69.8% → B1 40.6% → Mandate 0%" implied live-LLM competitor agents. In fact
+  (`eval/baselines/systems.py`) **B0/B1 are deterministic doubles**, and `eval/run_eval.py` builds a
+  `ReaderOutput` directly from each case's labelled `fields` with pre-labelled anomaly flags — so B2's 0% is an
+  **engine-level** result (given correct fields), not an end-to-end live-LLM measurement. Also: 7/24 families
+  are non-discriminative (B0 also 0/4).
+- Fix (honest scoping, no fabricated live results):
+  - README now labels B0/B1 as **structural baselines** and the ASR as **engine-level**, with a methodology
+    block explaining exactly what is and is not measured, the 3.9% CI upper bound, and the 7 non-discriminative
+    families.
+  - Added `eval/reader_eval.py` (+ `make reader-eval`, wired into `latest.json` and the evidence index) that
+    measures the **front** of the pipeline on the labelled set: anomaly-bearing docs caught and genuine docs
+    clean. Current: anomalies **2/2 caught**, genuine **3/3 clean**, field agreement **9/9**.
+  - Security self-assessment §6 and the technical doc aligned to the same scope.
+  - Live-LLM end-to-end run remains an explicit limitation (R-012), not claimed as done.
+- Status: fixed
+
+### BUG-014 · D-005 confidence floor made a hard security floor
+- Date: 2026-10-18 · Severity: S2 · Area: policy_engine
+- Finding (external review): `min_confidence` was not in the security floor, so a mandate (or a manipulated
+  compiler, A17) could set it to 0 and remove the low-confidence ESCALATE guard.
+- Fix: added `HARD_MIN_CONFIDENCE_BP = 8000`; the effective floor is now
+  `max(DEFAULT, HARD, rule value)`. A mandate may raise the bar, never lower it below 8000. Recorded on D-005.
+- Status: fixed
+
 ### NOTE-001 · Playwright: 2 tests report as "skipped" (by design, not a failure)
 - Date: 2026-10-18 · Area: e2e
 - What: the E2E suite reports **16 passed, 2 skipped**. The 2 skips are the `mobile-360` guardian-approval tests
@@ -275,7 +301,7 @@ Record any mismatch between `prd.md`, `implementation_plan.md`, `design.md`, `te
 | D-002 | 2026-10-18 | implementation_plan §3.3 rule set | `policy_engine/models.py` | Spec lists `time_window` and `conversion_rule` rule types; S1_NOTES §10 defers them (P2) | Not implemented; the closed set omits them and the compiler refuses them | Accepted (P2 cut) |
 | D-003 | 2026-10-18 | testing.md §6 / prd.md §6.1 | `eval/attacks/generate.py` | Spec says 100 attacks split 50/50 dev/held-out; A25 benign family is not an "attack" | 96 attack cases (24 families × 4) + 4 benign; splits remain 2 dev / 2 held-out per family | Explained |
 | D-004 | 2026-10-18 | CLAUDE.md §2 (LangGraph planner) | `apps/api/agents/planner` | Spec names LangGraph; S1/48-hour sprint permits a plain function chain (§9 cut 10) | Implemented as a plain function chain with an injected `complete()` | Accepted (cut) |
-| D-005 | 2026-10-18 | CLAUDE.md §1 invariant 3 (security floor) & decide.py §3 | `policy_engine/decide.py` confidence check | The anomaly floor (`BASELINE_BLOCKED`) cannot be weakened by a mandate, but `min_confidence` is NOT in that floor: `min_bp = max([MinConfidence rules]) or DEFAULT_MIN_CONFIDENCE_BP`, so any mandate supplying a `min_confidence` rule replaces the 9000 bp default entirely and can lower it (e.g. to 0), removing the `LOW_CONFIDENCE` ESCALATE guard. A manipulated compiler (family A17) could compile such a rule | Lower confidence still ESCALATEs (never ALLOWs) when the rule is absent; when a low rule is present the decision is governed by the rest of the policy. Pinned as current behavior in `tests/test_redteam_300_deep.py::test_confidence_rule_low_value_lowers_the_floor_FINDING`; not changed because a user mandate legitimately sets its own confidence floor and forcing a hard floor would alter documented policy semantics | Open (accepted risk, see R-001/R-002) |
+| D-005 | 2026-10-18 | CLAUDE.md §1 invariant 3 (security floor) & decide.py §3 | `policy_engine/decide.py` confidence check | The anomaly floor (`BASELINE_BLOCKED`) cannot be weakened by a mandate, but `min_confidence` was NOT in that floor: `min_bp = max([MinConfidence rules]) or DEFAULT_MIN_CONFIDENCE_BP`, so any mandate supplying a `min_confidence` rule replaced the 9000 bp default entirely and could lower it (e.g. to 0), removing the `LOW_CONFIDENCE` ESCALATE guard. A manipulated compiler (family A17) could compile such a rule | **FIXED 2026-10-18:** added a hard security floor `HARD_MIN_CONFIDENCE_BP = 8000` mirroring `BASELINE_BLOCKED`; the effective floor is now `max(DEFAULT_MIN_CONFIDENCE_BP, HARD_MIN_CONFIDENCE_BP, rule value)` — a mandate may RAISE the bar but never lower it below 8000. Test updated from the old pin to `test_confidence_rule_cannot_go_below_the_hard_floor` + `test_confidence_rule_above_the_hard_floor_is_honored` | Fixed |
 
 Known open ambiguities from planning (resolve early):
 1. **Demo video optional vs. required:** the official checklist marks it optional, but the execution-evidence row mentions a demo video. *Safest reading:* produce it.

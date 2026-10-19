@@ -47,10 +47,18 @@ token. Attack families A01–A25 (`eval/attacks/catalog.yaml`) model these.
 | Document sanitizer + detectors | `agents/reader/schema.py`, `agents/reader/anomalies.py` | U-SANIT, U-DET | passes |
 
 ## 6. Measured security results (replay, static benchmark)
-From `eval/reports/latest.json`: 96 attack cases (24 families × 4). Attack success rate — **B0 naive 69.8% ·
-B1 prompted 40.6% · Mandate 0%** (95% Wilson CI [0, 0.039]). False-block rate (benign) 0%. Failures are listed
-in the report; none occurred for Mandate on this run. This is a **static** benchmark: adaptive attackers may
-do better, and the numbers are on synthetic documents.
+
+From `eval/reports/latest.json`: 96 attack cases (24 families × 4). Engine-level attack success rate —
+**B0 no-policy baseline 69.8% · B1 prompt-only baseline 40.6% · Mandate 0%** (95% Wilson CI [0, 0.039]).
+False-block result: 0 of 4 benign cases blocked. Failures are listed in the report; none occurred for Mandate
+on this run.
+
+**Scope (important).** This is an **engine-level** measurement: each case supplies a labelled `ReaderOutput`
+and anomaly flags, so the result shows the deterministic engine authorises no violating payment *given correct
+fields*. It does **not** measure document parsing, OCR or hidden-text detection, and it is **not** a live-LLM
+end-to-end evaluation. B0/B1 are structural baselines (deterministic doubles in replay mode), not hosted-model
+measurements. The document-level detector path is exercised separately by `tests/test_prompt_injection_pdfs.py`
+(37 tests). This is a **static** benchmark on synthetic documents; adaptive attackers may do better.
 
 ## 7. Known-risk list (from docs/bugs.md §5)
 The full register lives in `bugs.md` §5. Headline residual risks:

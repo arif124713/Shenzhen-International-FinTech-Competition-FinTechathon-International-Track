@@ -1,5 +1,5 @@
 {
-  "run_id": "3c6d6a111f7a",
+  "run_id": "f71ec6b10327",
   "seed": 1337,
   "mode": "replay",
   "engine_version": "0.1.0",
@@ -475,6 +475,64 @@
       }
     ]
   },
+  "reader_eval": {
+    "documents": 5,
+    "reader_used": true,
+    "detector_recall": {
+      "caught": 2,
+      "total": 2
+    },
+    "detector_false_positives": {
+      "clean": 3,
+      "total": 3
+    },
+    "rows": [
+      {
+        "file": "inv_genuine_northfield.pdf",
+        "gold_flags": [],
+        "detected_flags": [],
+        "flag_ok": true,
+        "field_agreement": "9/9"
+      },
+      {
+        "file": "inv_large_amount.pdf",
+        "gold_flags": [],
+        "detected_flags": [],
+        "flag_ok": true,
+        "field_agreement": "9/9"
+      },
+      {
+        "file": "inv_substituted_account.pdf",
+        "gold_flags": [],
+        "detected_flags": [],
+        "flag_ok": true,
+        "field_agreement": "9/9"
+      },
+      {
+        "file": "inv_hidden_text.pdf",
+        "gold_flags": [
+          "INSTRUCTION_LIKE_TEXT"
+        ],
+        "detected_flags": [
+          "INSTRUCTION_LIKE_TEXT"
+        ],
+        "flag_ok": true,
+        "field_agreement": "9/9"
+      },
+      {
+        "file": "inv_payee_change.pdf",
+        "gold_flags": [
+          "PAYEE_CHANGE_NOTICE"
+        ],
+        "detected_flags": [
+          "INSTRUCTION_LIKE_TEXT",
+          "PAYEE_CHANGE_NOTICE"
+        ],
+        "flag_ok": true,
+        "field_agreement": "9/9"
+      }
+    ]
+  },
   "heldout_sha256": "a6819adebd7665ff8e2724331dc8469ad9960447b8cbfd2451e82b597d4303a4",
-  "generated_at": "2026-10-18T21:21:45.855258+00:00"
+  "generated_at": "2026-10-19T07:34:50.888879+00:00"
 }

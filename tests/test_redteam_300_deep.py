@@ -502,19 +502,25 @@ def test_confidence_boundaries(case, bp, expected):
     assert d.decision == expected
 
 
-def test_confidence_rule_low_value_lowers_the_floor_FINDING():
-    """FINDING (documented behavior): min_confidence is NOT in the baseline security floor, unlike
-    anomalies. `min_bp = max([MinConfidence rules]) or DEFAULT`: when a mandate supplies ANY min_confidence
-    rule the default 9000 is not consulted, so a mandate (or a manipulated compiler, family A17) can set
-    min_confidence low and remove the low-confidence ESCALATE guard. The engine stays secure here only
-    because low confidence escalates rather than allows; but the guard is policy-controllable by design.
-    This test pins the current behavior so any change is deliberate.
+def test_confidence_rule_cannot_go_below_the_hard_floor():
+    """FIXED (was D-005): min_confidence now has a HARD security floor (HARD_MIN_CONFIDENCE_BP = 8000) that a
+    mandate cannot go below, mirroring the anomaly floor (BASELINE_BLOCKED). A manipulated compiler (A17) can
+    raise the confidence bar but can no longer switch the low-confidence ESCALATE guard off by setting the rule
+    to 0. The effective floor is max(default, hard floor, rule value).
     """
     env = make_env()
     rules = [dict(r, value_bp=1000) if r["id"] == "R09" else r for r in default_rules()]
     d = run(env, rules=rules, reader_=reader(extraction_confidence_bp=5000))
-    assert d.decision == "ALLOW"
-    assert "LOW_CONFIDENCE" not in d.reason_codes
+    assert d.decision == "ESCALATE"
+    assert "LOW_CONFIDENCE" in d.reason_codes
+
+
+def test_confidence_rule_above_the_hard_floor_is_honored():
+    # A mandate may RAISE the bar above the hard floor; 9500 then escalates a 9000-confidence read.
+    env = make_env()
+    rules = [dict(r, value_bp=9500) if r["id"] == "R09" else r for r in default_rules()]
+    d = run(env, rules=rules, reader_=reader(extraction_confidence_bp=9000))
+    assert d.decision == "ESCALATE" and "LOW_CONFIDENCE" in d.reason_codes
 
 
 def test_confidence_rule_high_value_raises_the_floor():

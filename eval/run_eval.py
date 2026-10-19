@@ -30,6 +30,7 @@ from policy_engine.signing import generate_keypair  # noqa: E402
 from eval.attacks.generate import generate  # noqa: E402
 from eval.baselines.systems import b0_naive, b1_prompted  # noqa: E402
 from eval.fixtures_common import DEMO_MANDATE_RULES  # noqa: E402
+from eval.reader_eval import run as run_reader_eval  # noqa: E402
 from eval.scenarios.run import run as run_scenarios  # noqa: E402
 
 NOW = datetime(2026, 10, 20, 9, 0, tzinfo=timezone.utc)
@@ -260,6 +261,7 @@ def run(smoke: bool = False) -> dict:
                     "rate": round(per_system["B2"]["benign_blocked"] / len(benign), 4) if benign else 0.0}
 
     scenario_block = run_scenarios()
+    reader_block = run_reader_eval()
 
     report = {
         "run_id": uuid.uuid4().hex[:12], "seed": settings.eval_seed, "mode": settings.llm_provider,
@@ -268,6 +270,7 @@ def run(smoke: bool = False) -> dict:
         "attacks": {"total": n_attacks, "systems": systems, "failures": failures},
         "false_blocks": false_blocks,
         "scenarios": scenario_block,
+        "reader_eval": reader_block,
         "heldout_sha256": _heldout_hash(),
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -381,6 +384,19 @@ def _write_evidence_index(report: dict) -> None:
         "`guardian-360.png` (mobile), `activity.png`, `redteam.png`.",
         "",
     ]
+    rv = report.get("reader_eval")
+    if rv:
+        rec, fp = rv["detector_recall"], rv["detector_false_positives"]
+        lines += [
+            "## Reader / detector layer (separate from the engine benchmark)",
+            "",
+            "The engine-level ASR above assumes correct fields. This measures the FRONT of the pipeline on the",
+            "labelled invoice set (real upload -> detectors -> reader, replay):",
+            "",
+            f"- Anomaly-bearing documents caught by detectors: **{rec['caught']}/{rec['total']}**",
+            f"- Genuine documents with no false flag: **{fp['clean']}/{fp['total']}**",
+            "",
+        ]
     (out / "index.md").write_text("\n".join(lines), encoding="utf-8")
 
 

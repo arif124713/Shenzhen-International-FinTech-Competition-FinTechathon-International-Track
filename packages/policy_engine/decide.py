@@ -38,6 +38,10 @@ ENGINE_VERSION = "0.1.0"
 # Security floor: a mandate (and therefore a manipulated compiler, family A17) can never weaken these.
 BASELINE_BLOCKED = frozenset({"HIDDEN_TEXT", "INSTRUCTION_LIKE_TEXT", "PAYEE_CHANGE_NOTICE"})
 DEFAULT_MIN_CONFIDENCE_BP = 9000
+# Hard confidence floor. A mandate may RAISE its own min_confidence above this, but never lower it below: a
+# manipulated compiler (A17) must not be able to switch the low-confidence ESCALATE guard off by setting the
+# rule to 0. (D-005) The effective floor is max(DEFAULT_MIN_CONFIDENCE_BP, HARD_MIN_CONFIDENCE_BP, rule value).
+HARD_MIN_CONFIDENCE_BP = 8000
 _WINDOW_DAYS = {"rolling_7d": 7, "rolling_30d": 30}
 
 
@@ -154,7 +158,10 @@ def decide(signed: SignedMandate, proposal: ActionProposal, ctx: Context) -> Dec
 
     # ---- 3. confidence ----
     its = []
-    min_bp = max([r.value_bp for r in rules if isinstance(r, MinConfidence)] or [DEFAULT_MIN_CONFIDENCE_BP])
+    # Effective floor: the default, the hard security floor, and any mandate rule — the strictest wins, so a
+    # mandate can RAISE the bar but a manipulated one cannot lower it below HARD_MIN_CONFIDENCE_BP (D-005).
+    min_bp = max([DEFAULT_MIN_CONFIDENCE_BP, HARD_MIN_CONFIDENCE_BP]
+                 + [r.value_bp for r in rules if isinstance(r, MinConfidence)])
     if proposal.doc_ref is not None and reader is None:
         its.append(_Item("ESCALATE", "READER_OUTPUT_MISSING", approvers=cosigners))
     elif reader is not None and reader.extraction_confidence_bp < min_bp:
