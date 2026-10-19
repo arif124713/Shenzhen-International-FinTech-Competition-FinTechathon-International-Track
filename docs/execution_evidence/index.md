@@ -59,7 +59,6 @@ the 96-case attack set, so its attack row is `0/0`; it is measured only as the f
 False-block result (A25 benign cases, B2): **0/4 blocked** (0 means no benign document was wrongly blocked).
 
 ## Screenshots (flagship screens)
-
 In `docs/execution_evidence/screenshots/`: `dashboard.png`, `mandate.png`, `pay.png`, `registry.png`,
 `guardian-360.png` (mobile), `activity.png`, `redteam.png`.
 
