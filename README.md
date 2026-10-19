@@ -328,8 +328,6 @@ Formatted **PDFs** of the three submission documents are committed and regenerat
 | Red-team report (numbers) | `eval/reports/latest.json` · `latest.html` |
 | Execution evidence | `docs/execution_evidence/` (index, audit export, ledger CSV, signed checkpoint, portability, screenshots) · PDF: `docs/execution_evidence.pdf` |
 | Licence | `LICENSE` (MIT) · third-party scan in `THIRD_PARTY.md` |
-| Presentation deck (≤10 min, 8 slides) | _pending_ — outline in `docs/implementation_plan.md` §deck; to be recorded and linked here |
-| Demo video (≤5 min) | _pending_ — shot list in `docs/implementation_plan.md`; to be recorded and linked here |
 
 ---
 
@@ -370,9 +368,6 @@ Bangladesh — an institution **outside mainland China, Hong Kong, Macao and Chi
 All three members are Bangladesh nationals (100% non-Chinese nationals, which satisfies the track's ≥ 60%
 non-Chinese-national requirement). No member is affiliated with an institution in mainland China, Hong Kong,
 Macao or Chinese Taipei.
-
-> **Registration:** complete the official-site registration and save the receipt before submitting. (This is a
-> process step, tracked in `docs/bugs.md` §3, not a technical deliverable.)
 
 ## Licence
 
