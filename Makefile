@@ -9,7 +9,7 @@ else
 BIN := $(VENV)/bin
 endif
 
-.PHONY: setup test lint eval reader-eval e2e dev seed keys fixtures clean
+.PHONY: setup test lint eval reader-eval doctor live e2e dev seed keys fixtures clean
 
 setup:
 	$(PY) -m venv $(VENV)
@@ -35,6 +35,12 @@ eval:
 
 reader-eval:
 	$(BIN)/python -m eval.reader_eval
+
+doctor:
+	$(BIN)/python -m api.doctor
+
+live:
+	$(BIN)/python -m eval.live_reader
 
 e2e:
 	cd apps/web && npm install && npx playwright install chromium && npm run e2e

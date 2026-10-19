@@ -16,7 +16,7 @@ deterministic engine, a signed payee registry and a transaction-bound approval d
 
 | Result | Value | Source |
 |---|---|---|
-| Test suite | **1382 tests pass** (offline, no network) | `make test` |
+| Test suite | **1384 tests pass** (offline, no network) | `make test` |
 | Engine-level attack success — naive baseline **B0** | **69.8%** (67/96) — 95% Wilson CI [0.600, 0.781] | `eval/reports/latest.json` |
 | Engine-level attack success — heuristic "careful" baseline **B1** | **40.6%** (39/96) — CI [0.314, 0.506] | same |
 | Engine-level attack success — **Mandate (B2)** | **0.0%** (0/96) — CI [0.000, 0.038] | same |
@@ -201,7 +201,7 @@ engine benchmark and is reported as such.
 
 ---
 
-## Test suite (1382 tests, all offline)
+## Test suite (1384 tests, all offline)
 
 | File | Tests | Covers |
 |---|---:|---|
@@ -213,14 +213,14 @@ engine benchmark and is reported as such.
 | `tests/test_api_flows.py` | 25 | flagship API flows, registry, approvals, duplicate |
 | `tests/test_reader.py` | 21 | reader + sanitizer |
 | `tests/test_executor.py` | 13 | single execution path |
-| `tests/test_eval.py` | 14 | benchmark + scenario harness |
+| `tests/test_eval.py` | 16 | benchmark + scenario harness |
 | `tests/test_compiler_planner.py` | 8 | compiler/planner isolation |
 | `tests/test_router.py` | 8 | routing + rate cards |
 | `packages/policy_engine/tests/test_properties.py` | 5 | hypothesis invariants I1–I7 |
 | `tests/test_registry.py` | 5 | registry build/verify |
 | `tests/test_audit.py` | 2 | hash chain + checkpoints |
 | other (`purity`, `signing_canonical`, `single_execution_path`) | 4 | invariants |
-| **Total** | **1382** | |
+| **Total** | **1384** | |
 
 ### Claim → evidence map
 
@@ -248,9 +248,54 @@ make e2e                                   # Playwright UI flows (boots API + Vi
 **Reproduce the numbers.** `make setup` installs `-r requirements-dev.txt`, which includes **`hypothesis`**
 (needed for the property tests) — run it before `make test`, or test collection will stop on the missing
 package. Everything below runs **offline**: `LLM_PROVIDER=replay` (the default) uses recorded fixtures, so
-`make test` and `make eval` need **no network and no API key**. To use a live provider, set
-`LLM_PROVIDER=openai_compat` with `LLM_BASE_URL`/`LLM_API_KEY` (see `.env.example`; model IDs there are
-unverified placeholders — confirm them first).
+`make test` and `make eval` need **no network and no API key**.
+
+**Live run (optional, needs a provider key).** The model IDs in `.env.example` are **unverified placeholders**;
+confirm the real ones with the built-in probe before relying on a live run:
+
+```
+make doctor        # checks env; with a key: one-call model-id reachability + image-capability probe
+make live          # runs the 5 fixture invoices through the REAL model → eval/reports/live_reader.json
+```
+
+`make live` **fails closed** in replay mode or without a key, so a missing live run is never mistaken for a
+passing one. Set `LLM_PROVIDER=openai_compat` with `LLM_BASE_URL`/`LLM_API_KEY` first. The numbers reported in
+this README are from **replay** mode; no live run is claimed.
+
+---
+
+## Deploy / run it yourself
+
+There is no hosted deployment — the prototype runs locally and everything is simulated. Two ways:
+
+**Option A — local (Linux/macOS, or Windows via WSL / `py`):**
+
+```
+git clone https://github.com/arif124713/Shenzhen-International-FinTech-Competition-FinTechathon-International-Track.git
+cd Shenzhen-International-FinTech-Competition-FinTechathon-International-Track
+make setup                       # venv + deps + demo keys + registry
+make dev                         # API at http://localhost:8000  (replay LLM, no key needed)
+# in a second terminal:
+cd apps/web && npm install && npm run dev   # UI at http://localhost:5173 (proxies /api → :8000)
+```
+
+Then open **http://localhost:5173**. Seeded login: `rafi` (owner) and `ammu` (guardian). `DEMO_MODE=1`
+enables the demo/clock/admin routes; set `DEMO_MODE=0` to disable them.
+
+**Option B — Docker (if a container is preferred):**
+The repo is written for portability (repo-relative paths, LF endings, no absolute paths). Build a single image
+that installs `requirements-dev.txt` + `uvicorn` and runs `python -m uvicorn api.main:app --port 8000` from the
+repo root with `PYTHONPATH=packages;services;apps;.` and `LLM_PROVIDER=replay`; serve the built UI with
+`npm run build` behind any static server. (No `Dockerfile` is committed; the two commands above are the
+supported path.)
+
+**Verify without the UI:**
+
+```
+make test            # 1384 tests, offline
+make eval            # regenerate eval/reports/latest.json + docs/execution_evidence/index.md
+make reader-eval     # the reader/detector layer numbers
+```
 
 ---
 
@@ -267,11 +312,15 @@ unverified placeholders — confirm them first).
 | Deliverable | Where |
 |---|---|
 | Source code + setup | this repository; `make setup && make test && make eval` |
+| Repository link | https://github.com/arif124713/Shenzhen-International-FinTech-Competition-FinTechathon-International-Track |
+| Run / deploy instructions | this README, §*Deploy / run it yourself* |
 | Technical documentation | `docs/technical_documentation.md` |
 | Security self-assessment | `docs/security_self_assessment.md` |
 | Red-team report (numbers) | `eval/reports/latest.json` · `latest.html` |
-| Execution evidence | `docs/execution_evidence/` (index, audit export, ledger CSV, signed checkpoint, portability) |
-| Demo video / deck | _pending_ — to be recorded and linked here before submission |
+| Execution evidence | `docs/execution_evidence/` (index, audit export, ledger CSV, signed checkpoint, portability, screenshots) |
+| Licence | `LICENSE` (MIT) · third-party scan in `THIRD_PARTY.md` |
+| Presentation deck (≤10 min, 8 slides) | _pending_ — outline in `docs/implementation_plan.md` §deck; to be recorded and linked here |
+| Demo video (≤5 min) | _pending_ — shot list in `docs/implementation_plan.md`; to be recorded and linked here |
 
 ---
 
@@ -313,9 +362,14 @@ All three members are Bangladesh nationals (100% non-Chinese nationals, which sa
 non-Chinese-national requirement). No member is affiliated with an institution in mainland China, Hong Kong,
 Macao or Chinese Taipei.
 
-<!-- TODO before submitting — fill only with confirmed facts:
-Official-site registration: [complete on DATE; receipt saved in docs/execution_evidence/].
-If any member holds a nationality other than Bangladeshi, state it here (the ≥ 60% rule is already satisfied). -->
+> **Registration:** complete the official-site registration and save the receipt before submitting. (This is a
+> process step, tracked in `docs/bugs.md` §3, not a technical deliverable.)
+
+## Licence
+
+The Mandate source is released under the **MIT** licence (see [`LICENSE`](LICENSE)). A dependency licence scan
+(`pip-licenses` + `npx license-checker`, 2026-10-19) found **only permissive licences** — no GPL/AGPL. Full
+results and reproduction commands are in [`THIRD_PARTY.md`](THIRD_PARTY.md).
 
 ---
 

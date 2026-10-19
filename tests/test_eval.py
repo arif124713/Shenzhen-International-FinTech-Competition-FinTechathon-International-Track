@@ -133,3 +133,24 @@ def test_reader_eval_is_wired_into_the_report():
     report = run()
     assert report["reader_eval"]["documents"] == 5
     assert report["reader_eval"]["detector_recall"]["caught"] >= 1
+
+
+def test_live_reader_fails_closed_in_replay_mode(monkeypatch):
+    # A missing live run must never be mistaken for a passing one.
+    monkeypatch.setenv("LLM_PROVIDER", "replay")
+    import pytest
+
+    import eval.live_reader as live
+
+    with pytest.raises(SystemExit):
+        live.run()
+
+
+def test_doctor_reports_ok_offline(capsys):
+    from api import doctor
+
+    rc = doctor.run()
+    out = capsys.readouterr().out
+    assert rc == 0
+    assert "[PASS] provider configured" in out
+    assert "READER_MODE" in out  # the effective reader mode is always stated
