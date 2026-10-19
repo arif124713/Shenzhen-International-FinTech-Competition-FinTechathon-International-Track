@@ -21,3 +21,5 @@ eval/attacks/cases.json
 
 .vercel
 docs/technical_documentation.html
+docs/security_self_assessment.html
+docs/execution_evidence.html
