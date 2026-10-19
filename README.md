@@ -2,6 +2,7 @@
 
 > **Simulated — no real money moves.** Prototype for the 2026 Shenzhen International FinTech Competition,
 > International Track, Topic C. Every number in this file comes from `eval/reports/latest.json`.
+> **Live demo:** https://mandate-nu-ten.vercel.app
 
 An AI agent handles cross-border student money tasks (tuition, remittances, multi-currency balances),
 **but authority comes from a user-signed policy and every decision is made by deterministic code, not by an
@@ -266,7 +267,12 @@ this README are from **replay** mode; no live run is claimed.
 
 ## Deploy / run it yourself
 
-There is no hosted deployment — the prototype runs locally and everything is simulated. Two ways:
+**Hosted demo (live):** **https://mandate-nu-ten.vercel.app** — a UI/flow demo of the same code. Everything is
+simulated. Because Vercel runs the Python API as a stateless serverless function, in-memory sandbox state
+(mandate/ledger/approvals) may reset between requests; a demo mandate is seeded on cold start so the link is
+usable immediately. For the deterministic, stateful run (the one to record), use Option A below.
+
+There is no hosted *backend persistence* — the prototype runs locally and everything is simulated. Two ways:
 
 **Option A — local (Linux/macOS, or Windows via WSL / `py`):**
 
@@ -282,12 +288,10 @@ cd apps/web && npm install && npm run dev   # UI at http://localhost:5173 (proxi
 Then open **http://localhost:5173**. Seeded login: `rafi` (owner) and `ammu` (guardian). `DEMO_MODE=1`
 enables the demo/clock/admin routes; set `DEMO_MODE=0` to disable them.
 
-**Option B — Docker (if a container is preferred):**
-The repo is written for portability (repo-relative paths, LF endings, no absolute paths). Build a single image
-that installs `requirements-dev.txt` + `uvicorn` and runs `python -m uvicorn api.main:app --port 8000` from the
-repo root with `PYTHONPATH=packages;services;apps;.` and `LLM_PROVIDER=replay`; serve the built UI with
-`npm run build` behind any static server. (No `Dockerfile` is committed; the two commands above are the
-supported path.)
+**Option B — Vercel (hosted demo):**
+The repository includes `vercel.json` and `api/index.py`, so `vercel --prod` deploys the UI as static files and
+the FastAPI app as a Python serverless function under `/api/*`. Note the stateless caveat above; the hosted
+link is for a quick look, not the deterministic demo.
 
 **Verify without the UI:**
 
@@ -313,6 +317,7 @@ make reader-eval     # the reader/detector layer numbers
 |---|---|
 | Source code + setup | this repository; `make setup && make test && make eval` |
 | Repository link | https://github.com/arif124713/Shenzhen-International-FinTech-Competition-FinTechathon-International-Track |
+| Live demo (hosted) | https://mandate-nu-ten.vercel.app |
 | Run / deploy instructions | this README, §*Deploy / run it yourself* |
 | Technical documentation | `docs/technical_documentation.md` |
 | Security self-assessment | `docs/security_self_assessment.md` |

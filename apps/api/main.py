@@ -1,6 +1,8 @@
 """FastAPI application factory and route registration (implementation_plan §5)."""
 from __future__ import annotations
 
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -19,8 +21,12 @@ def create_app() -> FastAPI:
         response.headers["Referrer-Policy"] = "no-referrer"
         return response
 
+    # Same-origin on Vercel needs no CORS entry, but local dev and preview deploys do. Extra origins are
+    # supplied via CORS_ORIGINS (comma-separated) so a hosted demo can be reached from its own domain.
+    extra = [o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()]
     app.add_middleware(
-        CORSMiddleware, allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+        CORSMiddleware,
+        allow_origins=["http://localhost:5173", "http://127.0.0.1:5173", *extra],
         allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
     )
 

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import tempfile
 from functools import lru_cache
 from pathlib import Path
 
@@ -107,7 +108,22 @@ class Settings:
 
     @property
     def uploads_dir(self) -> Path:
-        return REPO_ROOT / "data" / "uploads"
+        # Uploads are stored outside any static root. On a read-only serverless filesystem (Vercel) the repo
+        # tree cannot be written, so fall back to a writable temp directory (UPLOADS_DIR overrides this).
+        override = get("UPLOADS_DIR", "")
+        if override:
+            return Path(override)
+        candidates = [REPO_ROOT / "data" / "uploads", Path(tempfile.gettempdir()) / "mandate_uploads"]
+        for candidate in candidates:
+            try:
+                candidate.mkdir(parents=True, exist_ok=True)
+                probe = candidate / ".write_test"
+                probe.write_text("", encoding="utf-8")
+                probe.unlink(missing_ok=True)
+                return candidate
+            except OSError:
+                continue
+        return Path(tempfile.gettempdir()) / "mandate_uploads"  # last resort; writes may still fail loudly
 
     @property
     def reports_dir(self) -> Path:

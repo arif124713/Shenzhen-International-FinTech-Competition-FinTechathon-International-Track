@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import json
 from datetime import datetime, timezone
+from pathlib import Path
 
 from policy_engine import KeyInfo
 
@@ -36,15 +37,19 @@ class SimClock:
 class Runtime:
     def __init__(self) -> None:
         self.clock = SimClock()
-        keys_path = settings.registry_dir / "keys.json"
+        keys_path, registry_path = _resolve_registry_files()
         if not keys_path.exists():
             from ..db.keys import ensure_keys, sign_registry
 
-            keys = ensure_keys()
-            sign_registry(keys)
+            # ensure_keys/sign_registry default to settings.registry_dir; when that is read-only (serverless)
+            # they must target the writable dir we resolved. Pass explicit paths for this process.
+            keys = ensure_keys(keys_path)
+            template = keys_path.parent / "registry.template.json"
+            sign_registry(keys, template_path=template if template.exists() else None, out_path=registry_path)
+            keys_path, registry_path = _resolve_registry_files()
         self.keys = json.loads(keys_path.read_text(encoding="utf-8"))
 
-        self.registry = Registry.load(settings.registry_dir / "registry.json")
+        self.registry = Registry.load(registry_path)
         self.ratecards, self.default_rail_id = load_ratecards(settings.ratecards_path)
 
         self.balances = {"acc_rafi_bdt": 50_000_000, "acc_rafi_usd": 300_000, "acc_rafi_gbp": 64_000,
@@ -127,6 +132,32 @@ class Runtime:
 
 
 _runtime: Runtime | None = None
+
+
+def _resolve_registry_files() -> tuple[Path, Path]:
+    """Return (keys_path, registry_path) preferring the repo registry dir, falling back to a writable temp dir.
+
+    On a serverless filesystem the repo tree is read-only and the (gitignored) demo keys/registry are not
+    bundled, so generation must target a writable location. The template is copied there when present.
+    """
+    import shutil
+    import tempfile
+
+    primary = settings.registry_dir
+    if (primary / "keys.json").exists() and (primary / "registry.json").exists():
+        return primary / "keys.json", primary / "registry.json"
+    try:
+        probe = primary / ".write_test"
+        probe.write_text("", encoding="utf-8")
+        probe.unlink(missing_ok=True)
+        return primary / "keys.json", primary / "registry.json"
+    except OSError:
+        writable = Path(tempfile.gettempdir()) / "mandate_registry"
+        writable.mkdir(parents=True, exist_ok=True)
+        template = primary / "registry.template.json"
+        if template.exists() and not (writable / "registry.template.json").exists():
+            shutil.copy(template, writable / "registry.template.json")
+        return writable / "keys.json", writable / "registry.json"
 
 
 def get_runtime() -> Runtime:
