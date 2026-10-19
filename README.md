@@ -17,7 +17,7 @@ deterministic engine, a signed payee registry and a transaction-bound approval d
 
 | Result | Value | Source |
 |---|---|---|
-| Test suite | **1384 tests pass** (offline, no network) | `make test` |
+| Test suite | **1388 tests pass** (offline, no network) | `make test` |
 | Engine-level attack success — naive baseline **B0** | **69.8%** (67/96) — 95% Wilson CI [0.600, 0.781] | `eval/reports/latest.json` |
 | Engine-level attack success — heuristic "careful" baseline **B1** | **40.6%** (39/96) — CI [0.314, 0.506] | same |
 | Engine-level attack success — **Mandate (B2)** | **0.0%** (0/96) — CI [0.000, 0.038] | same |
@@ -202,7 +202,7 @@ engine benchmark and is reported as such.
 
 ---
 
-## Test suite (1384 tests, all offline)
+## Test suite (1388 tests, all offline)
 
 | File | Tests | Covers |
 |---|---:|---|
@@ -215,13 +215,14 @@ engine benchmark and is reported as such.
 | `tests/test_reader.py` | 21 | reader + sanitizer |
 | `tests/test_executor.py` | 13 | single execution path |
 | `tests/test_eval.py` | 16 | benchmark + scenario harness |
+| `tests/test_docs_pdf.py` | 4 | technical-documentation PDF generator |
 | `tests/test_compiler_planner.py` | 8 | compiler/planner isolation |
 | `tests/test_router.py` | 8 | routing + rate cards |
 | `packages/policy_engine/tests/test_properties.py` | 5 | hypothesis invariants I1–I7 |
 | `tests/test_registry.py` | 5 | registry build/verify |
 | `tests/test_audit.py` | 2 | hash chain + checkpoints |
 | other (`purity`, `signing_canonical`, `single_execution_path`) | 4 | invariants |
-| **Total** | **1384** | |
+| **Total** | **1388** | |
 
 ### Claim → evidence map
 
@@ -296,7 +297,7 @@ link is for a quick look, not the deterministic demo.
 **Verify without the UI:**
 
 ```
-make test            # 1384 tests, offline
+make test            # 1388 tests, offline
 make eval            # regenerate eval/reports/latest.json + docs/execution_evidence/index.md
 make reader-eval     # the reader/detector layer numbers
 ```
@@ -306,6 +307,7 @@ make reader-eval     # the reader/detector layer numbers
 ## Documentation
 
 - `docs/technical_documentation.md` — architecture, core algorithms, security design (submission item 01).
+  A formatted **PDF** of it is committed at `docs/technical_documentation.pdf` (regenerate with `make pdf`).
 - `docs/security_self_assessment.md` — tiers, trust boundaries, controls, known risks (item 05).
 - `docs/execution_evidence/index.md` — scenario and attack results (item 06); plus audit export, ledger CSV,
   signed checkpoint and LLM config note in the same folder.
@@ -319,7 +321,7 @@ make reader-eval     # the reader/detector layer numbers
 | Repository link | https://github.com/arif124713/Shenzhen-International-FinTech-Competition-FinTechathon-International-Track |
 | Live demo (hosted) | https://mandate-nu-ten.vercel.app |
 | Run / deploy instructions | this README, §*Deploy / run it yourself* |
-| Technical documentation | `docs/technical_documentation.md` |
+| Technical documentation | `docs/technical_documentation.md` · PDF: `docs/technical_documentation.pdf` |
 | Security self-assessment | `docs/security_self_assessment.md` |
 | Red-team report (numbers) | `eval/reports/latest.json` · `latest.html` |
 | Execution evidence | `docs/execution_evidence/` (index, audit export, ledger CSV, signed checkpoint, portability, screenshots) |

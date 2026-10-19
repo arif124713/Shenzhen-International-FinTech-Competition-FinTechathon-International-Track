@@ -4,3 +4,7 @@ pytest>=8
 hypothesis>=6.100
 ruff>=0.5
 mypy>=1.10
+# Docs build (make pdf): markdown -> styled HTML -> PDF via headless Chromium
+markdown>=3.6
+pygments>=2.17
+playwright>=1.42

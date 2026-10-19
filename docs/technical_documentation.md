@@ -29,21 +29,22 @@ banks or KYC, and makes no regulatory-compliance claim.
 ## 2. Architecture and trust boundaries
 
 ```
- Browser (React)  ──►  FastAPI (apps/api)  ──►  routes → services → executor
-                                              │
-   ┌──────────────────────────────────────────┼───────────────────────────────────┐
-   ▼                                          ▼                                   ▼
- Intent compiler (LLM)                 Planner (LLM, untrusted)          Rail simulator + ledger
- NL → candidate Mandate                  → ActionProposal                 (services/rail_sim, SIMULATED)
-   │  signed, versioned                         │  structured fields only
-   ▼                                            ▼
- Mandate store ◄───────  POLICY ENGINE  ◄──  Reader (VLM, NO tools)  ◄──  Document pipeline
- (signed, append-only)   decide() pure         schema-only output          (text layer + detectors)
-   │                       │  signed decision_token
-   │                       ▼
-   │             EXECUTOR (only rail_sim importer)  ──►  ledger transfer (idempotent)
-   ▼
- Hash-chained audit log ──► signed checkpoints ──► evidence export
+ Browser (React)  -->  FastAPI (apps/api)  -->  routes -> services -> executor
+                                              |
+   +------------------------------------------+----------------------------------+
+   |                                          |                                  |
+   v                                          v                                  v
+ Intent compiler (LLM)                 Planner (LLM, untrusted)         Rail simulator + ledger
+ NL --> candidate Mandate               --> ActionProposal              (services/rail_sim, SIMULATED)
+   |  signed, versioned                        |  structured fields only
+   v                                           v
+ Mandate store  <----  POLICY ENGINE  <----  Reader (VLM, NO tools)  <----  Document pipeline
+ (signed, append-only)  decide() pure          schema-only output          (text layer + detectors)
+   |                       |  signed decision_token
+   |                       v
+   |             EXECUTOR (only rail_sim importer)  --->  ledger transfer (idempotent)
+   v
+ Hash-chained audit log  --->  signed checkpoints  --->  evidence export
 ```
 
 ### 2.1 Trust boundaries
